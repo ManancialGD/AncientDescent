@@ -2985,10 +2985,10 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1170754904}
-  - {fileID: 1029011557}
   - {fileID: 2084185652}
   - {fileID: 1794371069}
+  - {fileID: 1029011557}
+  - {fileID: 1170754904}
   m_Father: {fileID: 2039721731}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -3008,10 +3008,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6352b13f9a9ff4c4e916334c8090c9fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TransitionUI
-  up: {fileID: 2084185652}
-  down: {fileID: 1794371069}
-  left: {fileID: 1029011557}
-  right: {fileID: 1170754904}
+  panels:
+  - direction: 0
+    panel: {fileID: 2084185652}
+    closedScale: {x: 1, y: 1, z: 1}
+    openScale: {x: 1, y: 0, z: 1}
+    opposite: 1
+  - direction: 1
+    panel: {fileID: 1794371069}
+    closedScale: {x: 1, y: 1, z: 1}
+    openScale: {x: 1, y: 0, z: 1}
+    opposite: 0
+  - direction: 2
+    panel: {fileID: 1029011557}
+    closedScale: {x: 1, y: 1, z: 1}
+    openScale: {x: 0, y: 1, z: 1}
+    opposite: 3
+  - direction: 3
+    panel: {fileID: 1170754904}
+    closedScale: {x: 1, y: 1, z: 1}
+    openScale: {x: 0, y: 1, z: 1}
+    opposite: 2
   transitionTime: 0.35
 --- !u!1 &1155033481
 GameObject:

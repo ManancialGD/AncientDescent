@@ -3,58 +3,48 @@ using UnityEngine;
 
 public class TransitionUI : MonoBehaviour
 {
-    [Header("Panels")]
-    [SerializeField] private RectTransform up;
-    [SerializeField] private RectTransform down;
-    [SerializeField] private RectTransform left;
-    [SerializeField] private RectTransform right;
-
+    [SerializeField] private TransitionPanel[] panels;
     [SerializeField] private float transitionTime = 0.35f;
 
-    private RectTransform activePanel;
+    private TransitionPanel? active;
 
-    private void ResetPanels()
-    {
-        up.localScale = new Vector3(1, 0, 1);
-        down.localScale = new Vector3(1, 0, 1);
-        left.localScale = new Vector3(0, 1, 1);
-        right.localScale = new Vector3(0, 1, 1);
-    }
-
-    private RectTransform GetPanel(TransitionDirection dir)
-    {
-        return dir switch
-        {
-            TransitionDirection.Up => up,
-            TransitionDirection.Down => down,
-            TransitionDirection.Left => left,
-            TransitionDirection.Right => right,
-            _ => null
-        };
-    }
+    private TransitionPanel Get(TransitionDirection dir)
+        => System.Array.Find(panels, p => p.direction == dir);
 
     public IEnumerator Close(TransitionDirection dir)
     {
-        ResetPanels();
-        activePanel = GetPanel(dir);
+        ResetAll();
 
-        Vector3 from = activePanel.localScale;
-        Vector3 to = new(1, 1, 1);
+        active = Get(dir);
+        TransitionPanel p = active.Value;
 
-        yield return ScaleRoutine(activePanel, from, to);
+        yield return ScaleRoutine(p.panel, p.openScale, p.closedScale);
     }
 
     public IEnumerator Open()
     {
-        if (activePanel == null)
+        if (active == null)
             yield break;
 
-        Vector3 to = activePanel == left || activePanel == right
-            ? new Vector3(0, 1, 1)
-            : new Vector3(1, 0, 1);
+        TransitionPanel current = active.Value;
+        TransitionPanel opposite = Get(current.opposite);
 
-        yield return ScaleRoutine(activePanel, activePanel.localScale, to);
-        activePanel = null;
+        current.panel.localScale = current.openScale;
+        opposite.panel.localScale = opposite.closedScale;
+
+        yield return ScaleRoutine(
+            opposite.panel,
+            opposite.closedScale,
+            opposite.openScale
+        );
+
+        active = null;
+    }
+
+    private void ResetAll()
+    {
+        foreach (var p in panels)
+            p.panel.localScale = p.openScale;
     }
 
     private IEnumerator ScaleRoutine(RectTransform panel, Vector3 from, Vector3 to)

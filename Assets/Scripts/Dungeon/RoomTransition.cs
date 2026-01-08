@@ -6,6 +6,7 @@ using UnityEngine.AI;
 
 public class RoomTransition : NetworkBehaviour
 {
+    private static readonly float transitionDelay = 0.55f;
     [SerializeField] private Room from;
     [SerializeField] private Room to;
     [SerializeField] private int exitPoint;
@@ -41,7 +42,7 @@ public class RoomTransition : NetworkBehaviour
         // Close screen
         StartTransitionClientRpc(direction);
 
-        yield return new WaitForSeconds(0.4f);
+        yield return new WaitForSeconds(transitionDelay);
 
         // Teleport players
         foreach (var client in NetworkManager.Singleton.ConnectedClientsList)

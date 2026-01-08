@@ -1,5 +1,7 @@
 fileFormatVersion: 2
 guid: 450d60e9e16f1eb49ad7f3648a954794
+labels:
+- Placeholder
 TextureImporter:
   internalIDToNameTable:
   - first:
