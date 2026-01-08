@@ -1,0 +1,91 @@
+using Unity.Netcode;
+using UnityEngine;
+
+[RequireComponent(typeof(Rigidbody2D), typeof(NetworkObject))]
+public class PlayerMovement : NetworkBehaviour
+{
+    [Header("Movement Settings")]
+    [SerializeField] private float maxSpeed = 8f;
+    [SerializeField] private float acceleration = 15f;
+    [SerializeField] private float friction = 8f;
+
+    public bool IsMoving => RB.linearVelocity.sqrMagnitude > 0.01f;
+    public Vector2 Velocity => RB.linearVelocity;
+
+    public Rigidbody2D RB { get; private set; }
+
+    private void Awake()
+    {
+        RB = GetComponent<Rigidbody2D>();
+        RB.gravityScale = 0;
+        RB.freezeRotation = true;
+    }
+
+    public void ServerMove(Vector2 movementInput)
+    {
+        if (!NetworkManager.Singleton.IsServer) return;
+
+        movementInput = movementInput.normalized;
+
+        Vector2 accumulatedForce = Vector2.zero;
+
+        if (movementInput.sqrMagnitude > 0.001f)
+        {
+            accumulatedForce += Accelerate(
+                movementInput,
+                maxSpeed,
+                acceleration
+            );
+        }
+
+        ApplyFriction();
+        ApplyVelocity(accumulatedForce);
+    }
+
+    private Vector2 Accelerate(Vector2 wishDir, float wishSpeed, float accel)
+    {
+        float currentSpeed = Vector2.Dot(RB.linearVelocity, wishDir);
+        float addSpeed = wishSpeed - currentSpeed;
+
+        if (addSpeed <= 0f)
+            return Vector2.zero;
+
+        float accelSpeed = accel * Time.fixedDeltaTime * wishSpeed;
+        accelSpeed = Mathf.Min(accelSpeed, addSpeed);
+
+        return wishDir * accelSpeed;
+    }
+
+    private void ApplyFriction()
+    {
+        Vector2 velocity = RB.linearVelocity;
+        float speed = velocity.magnitude;
+
+        if (speed < 0.01f)
+        {
+            RB.linearVelocity = Vector2.zero;
+            return;
+        }
+
+        float drop = speed * friction * Time.fixedDeltaTime;
+        float newSpeed = Mathf.Max(speed - drop, 0);
+
+        RB.linearVelocity = velocity * (newSpeed / speed);
+    }
+
+    private void ApplyVelocity(Vector2 impulse)
+    {
+        if (impulse.sqrMagnitude > 0.001f)
+        {
+            RB.AddForce(impulse, ForceMode2D.Impulse);
+        }
+    }
+
+    // Server-side knockback
+    public void ApplyKnockback(Vector2 direction, float force)
+    {
+        if (!NetworkManager.Singleton.IsServer) return;
+
+        RB.AddForce(direction.normalized * force, ForceMode2D.Impulse);
+    }
+}
