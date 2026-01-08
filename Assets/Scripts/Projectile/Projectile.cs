@@ -7,18 +7,18 @@ public class Projectile : NetworkBehaviour
     public float speed = 10f;
     public float radius = 0.2f;
     public float lifetime = 2f;
-    public LayerMask enemyMask; // enemies layer
+    public LayerMask enemyMask;
     public LayerMask wallMask;
 
     private Vector2 direction;
     private float spawnTime;
-
     private HealthModule ownerHealth;
 
     // Called on server when projectile is spawned
     public void Initialize(Vector2 dir, HealthModule owner)
     {
         direction = dir.normalized;
+        transform.right = direction;
         spawnTime = Time.time;
     }
 
@@ -52,7 +52,7 @@ public class Projectile : NetworkBehaviour
             GetComponent<NetworkObject>().Despawn();
         }
     }
-    
+
 #if UNITY_EDITOR
     private void OnDrawGizmosSelected()
     {

@@ -45,7 +45,6 @@ public class HealthModule : NetworkBehaviour
         HealthChanged?.Invoke(newValue);
     }
 
-    // SERVER ONLY
     public void Damage(HealthModule damager, float damageAmount, float knockback = 0f, float stunTime = 0f)
     {
         if (!NetworkManager.Singleton.IsServer || IsDead) return;
@@ -67,7 +66,6 @@ public class HealthModule : NetworkBehaviour
         }
     }
 
-    // SERVER ONLY
     public void Heal(float healAmount)
     {
         if (!NetworkManager.Singleton.IsServer || IsDead) return;

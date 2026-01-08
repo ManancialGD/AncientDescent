@@ -6,39 +6,40 @@ using UnityEngine.InputSystem.iOS;
 [RequireComponent(typeof(Rigidbody2D), typeof(NetworkObject))]
 [RequireComponent(typeof(PlayerMovement))]
 [RequireComponent(typeof(HealthModule))]
+[RequireComponent(typeof(Animator))]
 public class PlayerController : NetworkBehaviour
 {
     public float shootCooldown = 0.2f;
     public GameObject projectilePrefab;
     public Transform firePoint;
+    public Animator muzzleFlashAnimator;
 
     private PlayerControls controls;
-    private HealthModule health;
+    public HealthModule Health { get; private set; }
 
-    private Vector2 moveInput;
+    public Vector2 MoveInput { get; private set; }
 
     private float lastShootTime;
 
-    public NetworkVariable<PlayerControlState> playerState =
+    private NetworkVariable<PlayerControlState> playerState =
         new(
             PlayerControlState.Gameplay,
             NetworkVariableReadPermission.Everyone,
             NetworkVariableWritePermission.Server
         );
 
-    private PlayerMovement movement;
+    public PlayerMovement Movement { get; private set; }
 
-    private void Awake()
-    {
-        movement = GetComponent<PlayerMovement>();
-        health = GetComponent<HealthModule>();
-
-        controls = new PlayerControls();
-    }
+    public PlayerControlState PlayerState => playerState.Value;
 
     public override void OnNetworkSpawn()
     {
+        Movement = GetComponent<PlayerMovement>();
+        Health = GetComponent<HealthModule>();
+
         if (!IsOwner) return;
+
+        controls = new PlayerControls();
 
         controls.Player.Move.performed += OnMovePerformed;
         controls.Player.Move.canceled += OnMoveCanceled;
@@ -58,22 +59,23 @@ public class PlayerController : NetworkBehaviour
         controls.Disable();
     }
 
+
     private void FixedUpdate()
     {
         if (!IsOwner) return;
         if (playerState.Value != PlayerControlState.Gameplay) return;
 
-        SubmitMoveInputServerRpc(moveInput.normalized);
+        SubmitMoveInputServerRpc(MoveInput.normalized);
     }
 
     private void OnMovePerformed(InputAction.CallbackContext ctx)
     {
-        moveInput = ctx.ReadValue<Vector2>();
+        MoveInput = ctx.ReadValue<Vector2>();
     }
 
     private void OnMoveCanceled(InputAction.CallbackContext ctx)
     {
-        moveInput = Vector2.zero;
+        MoveInput = Vector2.zero;
     }
 
     private void OnFirePerformed(InputAction.CallbackContext ctx)
@@ -90,13 +92,21 @@ public class PlayerController : NetworkBehaviour
 
         if (shootDir == Vector2.zero) return;
 
+        muzzleFlashAnimator.SetTrigger("fire");
         ShootServerRpc(firePoint.position, shootDir);
+    }
+
+    [ClientRpc]
+    private void PlayMuzzleClientRpc()
+    {
+        if (IsOwner) return;
+        muzzleFlashAnimator.SetTrigger("fire");
     }
 
     [ServerRpc]
     private void SubmitMoveInputServerRpc(Vector2 input)
     {
-        movement.ServerMove(input);
+        Movement.ServerMove(input);
     }
 
     [ServerRpc]
@@ -106,8 +116,10 @@ public class PlayerController : NetworkBehaviour
 
         lastShootTime = Time.time;
         GameObject proj = Instantiate(projectilePrefab, position, Quaternion.identity);
-        proj.GetComponent<Projectile>().Initialize(direction, health);
+        proj.GetComponent<Projectile>().Initialize(direction, Health);
         proj.GetComponent<NetworkObject>().Spawn();
+
+        PlayMuzzleClientRpc();
     }
 
     public void SetPlayerState(PlayerControlState newState)
