@@ -10,13 +10,19 @@ public class StartGameManager : NetworkBehaviour
 
     private void OnEnable()
     {
-        NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += OnSceneLoadCompleted;
+        if (NetworkManager.Singleton != null)
+            NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += OnSceneLoadCompleted;
     }
 
     private void OnDisable()
     {
-        NetworkManager.Singleton.SceneManager.OnLoadEventCompleted -= OnSceneLoadCompleted;
+        if (NetworkManager.Singleton != null &&
+            NetworkManager.Singleton.SceneManager != null)
+        {
+            NetworkManager.Singleton.SceneManager.OnLoadEventCompleted -= OnSceneLoadCompleted;
+        }
     }
+
 
     private void OnSceneLoadCompleted(
         string sceneName,

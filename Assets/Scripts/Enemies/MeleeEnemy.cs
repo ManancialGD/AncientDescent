@@ -1,30 +1,36 @@
 using Unity.Netcode;
 using UnityEngine;
 
-[RequireComponent(typeof(HealthModule), typeof(EnemyMovement))]
+[RequireComponent(typeof(HealthModule))]
+[RequireComponent(typeof(EnemyMovement))]
+[RequireComponent(typeof(MeleeEnemyAnimations))]
 [RequireComponent(typeof(NetworkObject))]
 public class MeleeEnemy : NetworkBehaviour
 {
     [Header("Combat Settings")]
     public float attackRange = 1.2f;
+    public float attackImpulse = 60;
+    public float attackRadius = 1.4f;
     public float attackDamage = 10f;
     public float attackCooldown = 1.5f;
     public float attackRecoveryTime = 1.0f;
     public float knockback = 30f;
+    [SerializeField] private LayerMask playerLayer;
 
     private float lastAttackTime;
+    private bool isAttacking;
     private bool isRecovering;
-    private float recoveryEndTime;
 
     private Transform targetPlayer;
     private HealthModule health;
     private EnemyMovement movement;
+    private MeleeEnemyAnimations animations;
 
-    private void Awake()
-    {
-        health = GetComponent<HealthModule>();
-        movement = GetComponent<EnemyMovement>();
-    }
+    public Vector2 LookDirection =>
+        targetPlayer != null
+            ? (targetPlayer.position - transform.position).normalized
+            : Vector2.zero;
+
 
     private void Update()
     {
@@ -34,13 +40,8 @@ public class MeleeEnemy : NetworkBehaviour
         AcquireTarget();
         if (targetPlayer == null) return;
 
-        if (isRecovering)
-        {
-            if (Time.time >= recoveryEndTime)
-                isRecovering = false;
-
-            return; // stop moving and attacking
-        }
+        if (isAttacking || isRecovering)
+            return;
 
         float distance = Vector2.Distance(transform.position, targetPlayer.position);
 
@@ -48,31 +49,65 @@ public class MeleeEnemy : NetworkBehaviour
         {
             movement.ServerMoveTowards(targetPlayer.position);
         }
-        else
+        else if (Time.time >= lastAttackTime + attackCooldown)
         {
-            TryAttack();
+            StartAttack();
         }
     }
 
-    private void TryAttack()
+    private void StartAttack()
     {
-        if (Time.time < lastAttackTime + attackCooldown) return;
-
         lastAttackTime = Time.time;
+        isAttacking = true;
 
-        if (targetPlayer.TryGetComponent<HealthModule>(out var playerHealth))
+        movement.Rb.AddForce(LookDirection.normalized * attackImpulse, ForceMode2D.Impulse);
+
+        animations.PlayAttackAnimation();
+    }
+
+    // === ANIMATION EVENT (HIT FRAME) ===
+    public void ApplyAttackHit()
+    {
+        if (!IsServer || !isAttacking)
+            return;
+
+        isAttacking = false;
+
+        Collider2D[] hits = Physics2D.OverlapCircleAll(
+            transform.position + (Vector3)(LookDirection * attackRange),
+            attackRadius,
+            playerLayer
+        );
+
+        foreach (var hit in hits)
         {
+            if (!hit.TryGetComponent(out HealthModule playerHealth))
+                continue;
+
             playerHealth.Damage(health, attackDamage, knockback);
-        }
 
-        if (knockback > 0f && targetPlayer.TryGetComponent(out PlayerMovement playerM))
-        {
-            Vector2 dir = ((Vector2)targetPlayer.position - (Vector2)transform.position).normalized;
-            playerM.ApplyKnockback(dir, knockback);
+            if (knockback > 0f &&
+                playerHealth.TryGetComponent(out PlayerMovement playerMovement))
+            {
+                Vector2 dir = (playerMovement.transform.position - transform.position).normalized;
+                playerMovement.ApplyKnockback(dir, knockback);
+            }
         }
 
         isRecovering = true;
-        recoveryEndTime = Time.time + attackRecoveryTime;
+    }
+
+    // === ANIMATION EVENT (LAST FRAME) ===
+    public void EndAttack()
+    {
+        if (!IsServer) return;
+
+        isRecovering = false;
+    }
+
+    private void EndRecovery()
+    {
+        isRecovering = false;
     }
 
     private void AcquireTarget()
@@ -81,10 +116,9 @@ public class MeleeEnemy : NetworkBehaviour
 
         foreach (var client in NetworkManager.Singleton.ConnectedClientsList)
         {
-            var playerObj = client.PlayerObject;
-            if (playerObj != null)
+            if (client.PlayerObject != null)
             {
-                targetPlayer = playerObj.transform;
+                targetPlayer = client.PlayerObject.transform;
                 break;
             }
         }
@@ -92,26 +126,34 @@ public class MeleeEnemy : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
-        if (!IsServer) return;
-        health.Died += OnDied;
+        health = GetComponent<HealthModule>();
+        movement = GetComponent<EnemyMovement>();
+        animations = GetComponent<MeleeEnemyAnimations>();
+
+        if (IsServer)
+            health.Died += OnDied;
     }
 
     public override void OnNetworkDespawn()
     {
-        if (!IsServer) return;
-        health.Died -= OnDied;
+        if (IsServer)
+            health.Died -= OnDied;
     }
 
     private void OnDied(HealthModule _)
     {
-        GetComponent<NetworkObject>()?.Despawn();
+        GetComponent<NetworkObject>().Despawn();
     }
 
 #if UNITY_EDITOR
     private void OnDrawGizmosSelected()
     {
-        Gizmos.color = isRecovering ? Color.yellow : Color.red;
+        Gizmos.color = Color.blue;
         Gizmos.DrawWireSphere(transform.position, attackRange);
+
+        Gizmos.color = Color.red;
+        Vector3 dir = LookDirection == Vector2.zero ? transform.right : LookDirection;
+        Gizmos.DrawWireSphere(transform.position + (dir * attackRange), attackRadius);
     }
 #endif
 }

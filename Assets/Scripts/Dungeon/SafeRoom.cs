@@ -8,14 +8,19 @@ public class SafeRoom : Room
 
     private void FixedUpdate()
     {
+        if (NetworkManager.Singleton == null)
+            return;
+
         if (!NetworkManager.Singleton.IsServer)
             return;
+
         if (!roomActive)
             return;
 
         foreach (var player in NetworkManager.Singleton.ConnectedClientsList)
         {
-            if (player.PlayerObject.TryGetComponent<HealthModule>(out var health))
+            if (player.PlayerObject != null &&
+                player.PlayerObject.TryGetComponent(out HealthModule health))
             {
                 health.Heal(healAmountPerSecond * Time.fixedDeltaTime);
             }
