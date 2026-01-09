@@ -6,6 +6,7 @@ public class Room : NetworkBehaviour, IRoom
     [field: SerializeField] public Transform[] EntryPoints { get; protected set; }
     [field: SerializeField] public Transform[] ExitPoints { get; protected set; }
     protected bool roomActive = false;
+    public bool RoomCompleted { get; protected set; } = false;
 
     public virtual void ActivateRoom()
     {

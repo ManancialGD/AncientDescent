@@ -34,14 +34,9 @@ public class CloserRoom : Room
 
     public override void ActivateRoom()
     {
-        if (!NetworkManager.Singleton.IsServer)
-            return;
+        base.ActivateRoom();
+        if (RoomCompleted) return;
 
-        if (roomActive)
-            return;
-
-        roomActive = true;
-        gameObject.SetActive(true);
         CloseDoors();
 
         foreach (var spawn in enemySpawnPoints)
@@ -69,6 +64,7 @@ public class CloserRoom : Room
 
         OpenDoors();
     }
+
     private void OnEnemyDied(HealthModule enemy)
     {
         aliveEnemies--;
@@ -77,6 +73,7 @@ public class CloserRoom : Room
         if (aliveEnemies <= 0)
         {
             roomActive = false;
+            RoomCompleted = true;
             OpenDoors();
         }
     }
