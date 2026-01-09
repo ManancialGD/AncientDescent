@@ -1,7 +1,7 @@
 public enum PlayerControlState
 {
     Gameplay,
-    Disabled,
+    Transition,
     Cutscene,
     Dead
 }

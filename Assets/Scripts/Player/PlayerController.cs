@@ -125,6 +125,12 @@ public class PlayerController : NetworkBehaviour
     public void SetPlayerState(PlayerControlState newState)
     {
         if (!IsServer) return;
+
         playerState.Value = newState;
+
+        if (newState != PlayerControlState.Gameplay)
+        {
+            MoveInput = Vector2.zero;
+        }
     }
 }

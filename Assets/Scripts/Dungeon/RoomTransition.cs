@@ -6,31 +6,34 @@ using UnityEngine.AI;
 
 public class RoomTransition : NetworkBehaviour
 {
+
     private static readonly float transitionDelay = 0.55f;
     [SerializeField] private Room from;
     [SerializeField] private Room to;
     [SerializeField] private int exitPoint;
     [SerializeField] private TransitionDirection direction;
     private TransitionUI transitionUI;
+    private readonly HashSet<NetworkObject> playersInTrigger = new();
+    private static bool transitionInProgress;
 
     private void Start()
     {
         transitionUI = FindAnyObjectByType<TransitionUI>();
     }
 
-    private readonly HashSet<NetworkObject> playersInTrigger = new();
-
     private void OnTriggerEnter2D(Collider2D col)
     {
         if (!IsServer) return;
+        if (transitionInProgress) return;
 
-        if (!col.TryGetComponent<NetworkObject>(out var netObj)) return;
+        if (!col.TryGetComponent(out NetworkObject netObj)) return;
         if (!netObj.TryGetComponent<PlayerController>(out _)) return;
 
         playersInTrigger.Add(netObj);
 
         if (playersInTrigger.Count == NetworkManager.Singleton.ConnectedClients.Count)
         {
+            transitionInProgress = true;
             StartCoroutine(TransitionRoutine());
         }
     }
@@ -39,7 +42,15 @@ public class RoomTransition : NetworkBehaviour
     {
         playersInTrigger.Clear();
 
-        // Close screen
+        // Lock player controls
+        foreach (var client in NetworkManager.Singleton.ConnectedClientsList)
+        {
+            if (client.PlayerObject.TryGetComponent(out PlayerController pc))
+            {
+                pc.SetPlayerState(PlayerControlState.Transition);
+            }
+        }
+
         StartTransitionClientRpc(direction);
 
         yield return new WaitForSeconds(transitionDelay);
@@ -51,13 +62,23 @@ public class RoomTransition : NetworkBehaviour
                 to.ExitPoints[exitPoint].position;
         }
 
-        // Room swap
         from.DeactivateRoom();
         to.ActivateRoom();
 
-        // Reveal
         EndTransitionClientRpc();
+
+        // Restore gameplay
+        foreach (var client in NetworkManager.Singleton.ConnectedClientsList)
+        {
+            if (client.PlayerObject.TryGetComponent(out PlayerController pc))
+            {
+                pc.SetPlayerState(PlayerControlState.Gameplay);
+            }
+        }
+
+        transitionInProgress = false;
     }
+
 
     [ClientRpc]
     private void StartTransitionClientRpc(TransitionDirection dir)
