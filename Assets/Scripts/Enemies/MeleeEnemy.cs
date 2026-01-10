@@ -105,11 +105,6 @@ public class MeleeEnemy : NetworkBehaviour
         isRecovering = false;
     }
 
-    private void EndRecovery()
-    {
-        isRecovering = false;
-    }
-
     private void AcquireTarget()
     {
         if (targetPlayer != null) return;
@@ -131,19 +126,32 @@ public class MeleeEnemy : NetworkBehaviour
         animations = GetComponent<MeleeEnemyAnimations>();
 
         if (IsServer)
+        {
             health.Died += OnDied;
+            health.Damaged += OnDamaged;
+        }
     }
 
     public override void OnNetworkDespawn()
     {
         if (IsServer)
+        {
             health.Died -= OnDied;
+            health.Damaged -= OnDamaged;
+        }
     }
 
     private void OnDied(HealthModule _)
     {
         GetComponent<NetworkObject>().Despawn();
     }
+
+    private void OnDamaged(DamageInfo info)
+    {
+        Vector2 knockBackDir = (transform.position - info.Damager.transform.position).normalized;
+        movement.Rb.AddForce(knockBackDir * info.Knockback, ForceMode2D.Impulse);
+    }
+
 
 #if UNITY_EDITOR
     private void OnDrawGizmosSelected()

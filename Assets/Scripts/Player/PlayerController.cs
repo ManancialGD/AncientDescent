@@ -92,6 +92,7 @@ public class PlayerController : NetworkBehaviour
 
         if (shootDir == Vector2.zero) return;
 
+        //todo: muzzle flash should be played if the shot is successful
         muzzleFlashAnimator.SetTrigger("fire");
         ShootServerRpc(firePoint.position, shootDir);
     }
@@ -112,9 +113,9 @@ public class PlayerController : NetworkBehaviour
     [ServerRpc]
     private void ShootServerRpc(Vector2 position, Vector2 direction)
     {
-        if (Time.time < lastShootTime + shootCooldown) return;
+        if (NetworkManager.Singleton.ServerTime.TimeAsFloat < lastShootTime + shootCooldown) return;
 
-        lastShootTime = Time.time;
+        lastShootTime = NetworkManager.Singleton.ServerTime.TimeAsFloat;
         GameObject proj = Instantiate(projectilePrefab, position, Quaternion.identity);
         proj.GetComponent<Projectile>().Initialize(direction, Health);
         proj.GetComponent<NetworkObject>().Spawn();

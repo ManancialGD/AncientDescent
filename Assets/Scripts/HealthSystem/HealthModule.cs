@@ -52,7 +52,7 @@ public class HealthModule : NetworkBehaviour
         CurrentHealth.Value -= damageAmount;
 
         Damaged?.Invoke(
-            new DamageInfo(damager, this, damageAmount, damager.transform.position, knockback, stunTime)
+            new DamageInfo(damager, this, damageAmount, knockback, stunTime)
         );
         onDamaged?.Invoke();
 

@@ -4,6 +4,7 @@ using UnityEngine;
 [RequireComponent(typeof(NetworkObject))]
 public class Projectile : NetworkBehaviour
 {
+    public float knockback = 60f;
     public float speed = 10f;
     public float radius = 0.2f;
     public float lifetime = 2f;
@@ -20,6 +21,7 @@ public class Projectile : NetworkBehaviour
         direction = dir.normalized;
         transform.right = direction;
         spawnTime = Time.time;
+        ownerHealth = owner;
     }
 
     private void Update()
@@ -35,7 +37,7 @@ public class Projectile : NetworkBehaviour
         {
             // Damage enemy
             if (enemyHit.TryGetComponent<HealthModule>(out var enemyH))
-                enemyH.Damage(ownerHealth, 20f);
+                enemyH.Damage(ownerHealth, 20f, knockback);
 
             GetComponent<NetworkObject>().Despawn();
         }
