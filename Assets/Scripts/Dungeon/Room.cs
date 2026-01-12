@@ -5,14 +5,23 @@ public class Room : NetworkBehaviour, IRoom
 {
     [field: SerializeField] public Transform[] EntryPoints { get; protected set; }
     [field: SerializeField] public Transform[] ExitPoints { get; protected set; }
+    [SerializeField] private Transform cameraTarget;
     protected bool roomActive = false;
     public bool RoomCompleted { get; protected set; } = false;
 
+    private CameraFollow cameraFollow;
+
     public virtual void ActivateRoom()
     {
+        if (NetworkManager.Singleton.IsClient)
+        {
+            cameraFollow ??= FindAnyObjectByType<CameraFollow>();
+            cameraFollow?.SetRoomTarget(cameraTarget);
+        }
+
         if (!NetworkManager.Singleton.IsServer)
             return;
-
+        
         roomActive = true;
         gameObject.SetActive(true);
     }
