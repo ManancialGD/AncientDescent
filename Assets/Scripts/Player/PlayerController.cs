@@ -1,8 +1,6 @@
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.iOS;
-
 [RequireComponent(typeof(Rigidbody2D), typeof(NetworkObject))]
 [RequireComponent(typeof(PlayerMovement))]
 [RequireComponent(typeof(HealthModule))]
@@ -92,15 +90,12 @@ public class PlayerController : NetworkBehaviour
 
         if (shootDir == Vector2.zero) return;
 
-        //todo: muzzle flash should be played if the shot is successful
-        muzzleFlashAnimator.SetTrigger("fire");
         ShootServerRpc(firePoint.position, shootDir);
     }
 
     [ClientRpc]
     private void PlayMuzzleClientRpc()
     {
-        if (IsOwner) return;
         muzzleFlashAnimator.SetTrigger("fire");
     }
 
