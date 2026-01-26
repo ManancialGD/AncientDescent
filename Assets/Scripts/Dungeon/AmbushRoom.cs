@@ -65,6 +65,7 @@ public class AmbushRoom : Room
     {
         OpenDoors();
         rewardChest.Unlock();
+        RoomCompleted = true;
     }
 
     private void CloseDoors()
