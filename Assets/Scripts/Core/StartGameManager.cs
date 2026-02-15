@@ -5,8 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class StartGameManager : NetworkBehaviour
 {
-    [SerializeField] private SafeRoom startRoom;
-    [SerializeField] private Room[] otherRooms;
+    [SerializeField] private Transform[] spawnPoints;
 
     private void OnEnable()
     {
@@ -23,7 +22,6 @@ public class StartGameManager : NetworkBehaviour
         }
     }
 
-
     private void OnSceneLoadCompleted(
         string sceneName,
         LoadSceneMode loadSceneMode,
@@ -34,7 +32,6 @@ public class StartGameManager : NetworkBehaviour
             return;
 
         int i = 0;
-
         foreach (var clientId in clientsCompleted)
         {
             if (!NetworkManager.Singleton.ConnectedClients.TryGetValue(clientId, out var client))
@@ -45,16 +42,24 @@ public class StartGameManager : NetworkBehaviour
                 continue;
 
             player.transform.position =
-                startRoom.SpawnPoints[i % startRoom.ExitPoints.Length].position;
+                spawnPoints[i % spawnPoints.Length].position;
             i++;
-        }
-
-        startRoom.ActivateRoom();
-        foreach (var room in otherRooms)
-        {
-            room.DeactivateRoom();
         }
     }
 
+    public void RespawnPlayersAtStart()
+    {
+        if (!NetworkManager.Singleton.IsServer) return;
 
+        int i = 0;
+        foreach (var client in NetworkManager.Singleton.ConnectedClientsList)
+        {
+            if (client.PlayerObject != null)
+            {
+                client.PlayerObject.transform.position =
+                    spawnPoints[i % spawnPoints.Length].position;
+                i++;
+            }
+        }
+    }
 }

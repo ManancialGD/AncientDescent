@@ -148,6 +148,7 @@ public class MeleeEnemy : NetworkBehaviour
 
     private void OnDamaged(DamageInfo info)
     {
+        if (info.Damager == null) return;
         Vector2 knockBackDir = (transform.position - info.Damager.transform.position).normalized;
         movement.Rb.AddForce(knockBackDir * info.Knockback, ForceMode2D.Impulse);
     }

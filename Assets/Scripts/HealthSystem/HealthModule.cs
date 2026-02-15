@@ -7,7 +7,7 @@ public class HealthModule : NetworkBehaviour
 {
     [field: SerializeField] public float MaxHealth { get; private set; } = 100f;
 
-    public NetworkVariable<float> CurrentHealth = new NetworkVariable<float>(
+    public NetworkVariable<float> CurrentHealth = new(
         readPerm: NetworkVariableReadPermission.Everyone,
         writePerm: NetworkVariableWritePermission.Server
     );
@@ -54,6 +54,7 @@ public class HealthModule : NetworkBehaviour
         Damaged?.Invoke(
             new DamageInfo(damager, this, damageAmount, knockback, stunTime)
         );
+        
         onDamaged?.Invoke();
 
         if (CurrentHealth.Value <= 0f)

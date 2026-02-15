@@ -12,9 +12,13 @@ public class PlayerKeys : NetworkBehaviour
         keys.Value++;
     }
 
+    /// <summary>
+    /// Attempts to consume a key.
+    /// </summary>
+    /// <returns>Returns true if successful, false if the player has no keys.</returns>
     public bool ConsumeKey()
     {
-        if (!IsServer || keys.Value <= 0) return false;
+        if (!NetworkManager.Singleton.IsServer || keys.Value <= 0) return false;
         keys.Value--;
         return true;
     }
