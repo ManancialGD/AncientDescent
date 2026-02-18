@@ -1,13 +1,15 @@
-using Unity.Netcode;
+﻿using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
+
 [RequireComponent(typeof(Rigidbody2D), typeof(NetworkObject))]
 [RequireComponent(typeof(PlayerMovement))]
 [RequireComponent(typeof(HealthModule))]
 [RequireComponent(typeof(Animator))]
 public class PlayerController : NetworkBehaviour
 {
-    public float shootCooldown = 0.2f;
+    private PlayerStats stats;
+    private float ShootRate => stats.GetStat(StatType.ShootRate);
     public GameObject projectilePrefab;
     public Transform firePoint;
     public Animator muzzleFlashAnimator;
@@ -29,6 +31,11 @@ public class PlayerController : NetworkBehaviour
     public PlayerMovement Movement { get; private set; }
 
     public PlayerControlState PlayerState => playerState.Value;
+
+    private void Awake()
+    {
+        stats = GetComponent<PlayerStats>();
+    }
 
     public override void OnNetworkSpawn()
     {
@@ -108,7 +115,7 @@ public class PlayerController : NetworkBehaviour
     [ServerRpc]
     private void ShootServerRpc(Vector2 position, Vector2 direction)
     {
-        if (NetworkManager.Singleton.ServerTime.TimeAsFloat < lastShootTime + shootCooldown) return;
+        if (NetworkManager.Singleton.ServerTime.TimeAsFloat < lastShootTime + ShootRate) return;
 
         lastShootTime = NetworkManager.Singleton.ServerTime.TimeAsFloat;
         GameObject proj = Instantiate(projectilePrefab, position, Quaternion.identity);

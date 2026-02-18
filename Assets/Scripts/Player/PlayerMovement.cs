@@ -1,13 +1,14 @@
-using Unity.Netcode;
+﻿using Unity.Netcode;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D), typeof(NetworkObject))]
 public class PlayerMovement : NetworkBehaviour
 {
-    [Header("Movement Settings")]
-    [SerializeField] private float maxSpeed = 8f;
-    [SerializeField] private float acceleration = 15f;
-    [SerializeField] private float friction = 8f;
+    private PlayerStats stats;
+
+    private float MaxSpeed => stats.GetStat(StatType.MoveSpeed);
+    private float Acceleration => stats.GetStat(StatType.Acceleration);
+    private float Friction => stats.GetStat(StatType.Friction);
 
     public bool IsMoving => RB.linearVelocity.sqrMagnitude > 0.01f;
     public Vector2 Velocity => RB.linearVelocity;
@@ -16,6 +17,8 @@ public class PlayerMovement : NetworkBehaviour
 
     private void Awake()
     {
+        stats = GetComponent<PlayerStats>();
+
         RB = GetComponent<Rigidbody2D>();
         RB.gravityScale = 0;
         RB.freezeRotation = true;
@@ -33,8 +36,8 @@ public class PlayerMovement : NetworkBehaviour
         {
             accumulatedForce += Accelerate(
                 movementInput,
-                maxSpeed,
-                acceleration
+                MaxSpeed,
+                Acceleration
             );
         }
 
@@ -67,7 +70,7 @@ public class PlayerMovement : NetworkBehaviour
             return;
         }
 
-        float drop = speed * friction * Time.fixedDeltaTime;
+        float drop = speed * Friction * Time.fixedDeltaTime;
         float newSpeed = Mathf.Max(speed - drop, 0);
 
         RB.linearVelocity = velocity * (newSpeed / speed);

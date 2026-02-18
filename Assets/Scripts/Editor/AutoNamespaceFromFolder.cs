@@ -1,6 +1,4 @@
 ﻿#if UNITY_EDITOR
-namespace GameName.Editor
-{
     using UnityEditor;
     using UnityEngine;
     using System.IO;
@@ -176,5 +174,4 @@ namespace GameName.Editor
             return path.Replace("\\", "/");
         }
     }
-}
 #endif

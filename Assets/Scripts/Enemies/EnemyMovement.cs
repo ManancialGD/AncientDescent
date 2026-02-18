@@ -1,4 +1,4 @@
-using Unity.Netcode;
+﻿using Unity.Netcode;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
@@ -26,7 +26,7 @@ public class EnemyMovement : NetworkBehaviour
         Vector2 impulse = Accelerate(dir, moveSpeed, acceleration);
         Rb.AddForce(impulse, ForceMode2D.Impulse);
     }
-    
+
     private void FixedUpdate()
     {
         if (!IsServer) return;

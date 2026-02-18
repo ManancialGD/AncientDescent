@@ -362,10 +362,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 312424015}
-  - component: {fileID: 312424014}
-  - component: {fileID: 312424018}
-  - component: {fileID: 312424016}
   - component: {fileID: 312424017}
+  - component: {fileID: 312424018}
+  - component: {fileID: 312424014}
+  - component: {fileID: 312424016}
   m_Layer: 0
   m_Name: DugeonRoom3
   m_TagString: Untagged
@@ -439,11 +439,22 @@ MonoBehaviour:
   m_GameObject: {fileID: 312424013}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f7dfc336e63d14c4c8c2f60051a3d497, type: 3}
+  m_Script: {fileID: 11500000, guid: 304537d509fe8a841b55d89f2a3a93ac, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RoomController
-  ShowTopMostFoldoutHeaderGroup: 1
-  boundaryTrigger: {fileID: 1769767496}
+  m_EditorClassIdentifier: Assembly-CSharp::PortalRoomBehaviour
+  portalHealthModule: {fileID: 1419278563}
+  doorObjects:
+  - {fileID: 1385374960}
+  spawnPoint: {fileID: 1419278559}
+  spawnRate: 2.5
+  enemyPrefab: {fileID: 8775893410314518539, guid: b542fb50c75b79f45985b3879c834c29, type: 3}
+  maxAliveEnemies: 5
+  OnCombatStarted:
+    m_PersistentCalls:
+      m_Calls: []
+  OnPortalDestroyed:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &312424018
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -453,22 +464,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 312424013}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5be825b3e96542b4ebb2bc21a7afdc69, type: 3}
+  m_Script: {fileID: 11500000, guid: 1a3b486753337794fb9ca7847325b812, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PortalRoomBehaviour
-  portalHealthModule: {fileID: 1419278561}
-  doorObjects:
-  - {fileID: 1385374960}
-  spawnPoint: {fileID: 1419278559}
-  spawnRate: 2
-  enemyPrefab: {fileID: 8775893410314518539, guid: b542fb50c75b79f45985b3879c834c29, type: 3}
-  maxAliveEnemies: 5
-  OnCombatStarted:
-    m_PersistentCalls:
-      m_Calls: []
-  OnPortalDestroyed:
-    m_PersistentCalls:
-      m_Calls: []
+  m_EditorClassIdentifier: Assembly-CSharp::RoomController
+  ShowTopMostFoldoutHeaderGroup: 1
+  boundaryTrigger: {fileID: 1769767496}
 --- !u!1 &370542161
 GameObject:
   m_ObjectHideFlags: 0
@@ -4100,9 +4100,9 @@ GameObject:
   m_Component:
   - component: {fileID: 439231019}
   - component: {fileID: 439231018}
-  - component: {fileID: 439231020}
-  - component: {fileID: 439231021}
   - component: {fileID: 439231022}
+  - component: {fileID: 439231024}
+  - component: {fileID: 439231023}
   m_Layer: 0
   m_Name: SafeRoom
   m_TagString: Untagged
@@ -4141,33 +4141,6 @@ Transform:
   - {fileID: 493615241}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &439231020
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 439231017}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f7dfc336e63d14c4c8c2f60051a3d497, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RoomController
-  ShowTopMostFoldoutHeaderGroup: 1
-  boundaryTrigger: {fileID: 1657639389}
---- !u!114 &439231021
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 439231017}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8e55476aade17834eacca19dbb303dd4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SafeRoomBehaviour
-  healPerSecond: 15
 --- !u!114 &439231022
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4193,6 +4166,33 @@ MonoBehaviour:
   AutoObjectParentSync: 1
   SyncOwnerTransformWhenParented: 1
   AllowOwnerToParent: 0
+--- !u!114 &439231023
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 439231017}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e665cd41d7ffacc44b33d348c937a65d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SafeRoomBehaviour
+  healPerSecond: 10
+--- !u!114 &439231024
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 439231017}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a3b486753337794fb9ca7847325b812, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RoomController
+  ShowTopMostFoldoutHeaderGroup: 1
+  boundaryTrigger: {fileID: 1657639389}
 --- !u!1 &463880368
 GameObject:
   m_ObjectHideFlags: 0
@@ -10395,7 +10395,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 651327085}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 91a45d768b2f32c44b0ffe6c2152fa45, type: 3}
+  m_Script: {fileID: 11500000, guid: 2c253fd0b9f0fed4d838dfccbbe3cda1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerTrigger2D
 --- !u!1 &759877925
@@ -10486,7 +10486,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 869240861}
-  - component: {fileID: 869240862}
+  - component: {fileID: 869240864}
   - component: {fileID: 869240863}
   m_Layer: 0
   m_Name: StartGameManager
@@ -10510,21 +10510,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &869240862
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 869240860}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 259d1d3fb7b6a614caf5470f5e1532e1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::StartGameManager
-  ShowTopMostFoldoutHeaderGroup: 1
-  spawnPoints:
-  - {fileID: 493615241}
 --- !u!114 &869240863
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10550,6 +10535,21 @@ MonoBehaviour:
   AutoObjectParentSync: 1
   SyncOwnerTransformWhenParented: 0
   AllowOwnerToParent: 0
+--- !u!114 &869240864
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 869240860}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5d07e9753f5496488ca3950bcc41124, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StartGameManager
+  ShowTopMostFoldoutHeaderGroup: 1
+  spawnPoints:
+  - {fileID: 493615241}
 --- !u!1 &881702299
 GameObject:
   m_ObjectHideFlags: 0
@@ -11807,9 +11807,9 @@ GameObject:
   m_Component:
   - component: {fileID: 958115410}
   - component: {fileID: 958115409}
-  - component: {fileID: 958115411}
-  - component: {fileID: 958115412}
+  - component: {fileID: 958115414}
   - component: {fileID: 958115413}
+  - component: {fileID: 958115415}
   m_Layer: 0
   m_Name: DungeonRoom1
   m_TagString: Untagged
@@ -11851,48 +11851,6 @@ Transform:
   - {fileID: 1920517198}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &958115411
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 958115408}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2367fa8b6b8ab3f46805533d274a803a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CombatRoomBehaviour
-  activationTrigger: {fileID: 1920517201}
-  doorObjects:
-  - {fileID: 604981269}
-  spawnPoints:
-  - {fileID: 982560899}
-  - {fileID: 2128593673}
-  - {fileID: 1592804658}
-  enemyPrefab: {fileID: 8775893410314518539, guid: b542fb50c75b79f45985b3879c834c29, type: 3}
-  enemiesToSpawn: 3
-  resetOnPlayerExit: 0
-  OnCombatStarted:
-    m_PersistentCalls:
-      m_Calls: []
-  OnCombatCompleted:
-    m_PersistentCalls:
-      m_Calls: []
---- !u!114 &958115412
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 958115408}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f7dfc336e63d14c4c8c2f60051a3d497, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RoomController
-  ShowTopMostFoldoutHeaderGroup: 1
-  boundaryTrigger: {fileID: 1023766998}
 --- !u!114 &958115413
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11918,6 +11876,47 @@ MonoBehaviour:
   AutoObjectParentSync: 1
   SyncOwnerTransformWhenParented: 1
   AllowOwnerToParent: 0
+--- !u!114 &958115414
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 958115408}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c9348ecad1012d47ae674a1b2859db8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CombatRoomBehaviour
+  activationTrigger: {fileID: 1920517201}
+  doorObjects:
+  - {fileID: 604981269}
+  spawnPoints:
+  - {fileID: 982560899}
+  - {fileID: 2128593673}
+  - {fileID: 1592804658}
+  enemyPrefab: {fileID: 8775893410314518539, guid: b542fb50c75b79f45985b3879c834c29, type: 3}
+  resetOnPlayerExit: 0
+  OnCombatStarted:
+    m_PersistentCalls:
+      m_Calls: []
+  OnCombatCompleted:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &958115415
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 958115408}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a3b486753337794fb9ca7847325b812, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RoomController
+  ShowTopMostFoldoutHeaderGroup: 1
+  boundaryTrigger: {fileID: 1023766998}
 --- !u!1 &982560898
 GameObject:
   m_ObjectHideFlags: 0
@@ -12037,7 +12036,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1023766994}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 91a45d768b2f32c44b0ffe6c2152fa45, type: 3}
+  m_Script: {fileID: 11500000, guid: 2c253fd0b9f0fed4d838dfccbbe3cda1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerTrigger2D
 --- !u!1 &1155033481
@@ -16864,8 +16863,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1419278559}
+  - component: {fileID: 1419278563}
   - component: {fileID: 1419278560}
-  - component: {fileID: 1419278561}
   - component: {fileID: 1419278562}
   m_Layer: 6
   m_Name: Portal
@@ -16937,43 +16936,6 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 61.97849, y: 62.791504}
   m_EdgeRadius: 0
---- !u!114 &1419278561
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1419278558}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0f4788908f799814a9e3a04c2c7e5249, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HealthModule
-  ShowTopMostFoldoutHeaderGroup: 1
-  <MaxHealth>k__BackingField: 400
-  CurrentHealth:
-    m_InternalValue: 0
-  onDamaged:
-    m_PersistentCalls:
-      m_Calls: []
-  onHealed:
-    m_PersistentCalls:
-      m_Calls: []
-  onDied:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1419278558}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!114 &1419278562
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16999,6 +16961,43 @@ MonoBehaviour:
   AutoObjectParentSync: 1
   SyncOwnerTransformWhenParented: 1
   AllowOwnerToParent: 0
+--- !u!114 &1419278563
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1419278558}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fc86d374d60f014e815e6fc1d051cf2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HealthModule
+  ShowTopMostFoldoutHeaderGroup: 1
+  defaultMaxHealth: 1000
+  CurrentHealth:
+    m_InternalValue: 0
+  onDamaged:
+    m_PersistentCalls:
+      m_Calls: []
+  onHealed:
+    m_PersistentCalls:
+      m_Calls: []
+  onDied:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1419278558}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &1529907291
 GameObject:
   m_ObjectHideFlags: 0
@@ -17289,21 +17288,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1552534707}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f7dfc336e63d14c4c8c2f60051a3d497, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RoomController
-  ShowTopMostFoldoutHeaderGroup: 1
-  boundaryTrigger: {fileID: 2037343356}
---- !u!114 &1552534712
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1552534707}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2367fa8b6b8ab3f46805533d274a803a, type: 3}
+  m_Script: {fileID: 11500000, guid: 8c9348ecad1012d47ae674a1b2859db8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CombatRoomBehaviour
   activationTrigger: {fileID: 651327088}
@@ -17314,7 +17299,6 @@ MonoBehaviour:
   - {fileID: 931452195}
   - {fileID: 1155033482}
   enemyPrefab: {fileID: 8775893410314518539, guid: b542fb50c75b79f45985b3879c834c29, type: 3}
-  enemiesToSpawn: 3
   resetOnPlayerExit: 0
   OnCombatStarted:
     m_PersistentCalls:
@@ -17334,6 +17318,20 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &1552534712
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1552534707}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a3b486753337794fb9ca7847325b812, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RoomController
+  ShowTopMostFoldoutHeaderGroup: 1
+  boundaryTrigger: {fileID: 2037343356}
 --- !u!1 &1592804657
 GameObject:
   m_ObjectHideFlags: 0
@@ -18700,8 +18698,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1620834163}
-  - component: {fileID: 1620834164}
   - component: {fileID: 1620834168}
+  - component: {fileID: 1620834164}
   - component: {fileID: 1620834166}
   - component: {fileID: 1620834167}
   m_Layer: 3
@@ -18829,9 +18827,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 1620834162}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b231f561fb801424ab468226a4b9e846, type: 3}
+  m_Script: {fileID: 11500000, guid: c78cef986210c544497a95b55cd6b02b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Chest
+  itemsToGive:
+  - itemDefinition: {fileID: 11400000, guid: 70a417ccc68a59946a6caa772f8d6082, type: 2}
+    lockId: 0
 --- !u!1 &1657639385
 GameObject:
   m_ObjectHideFlags: 0
@@ -18841,8 +18842,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1657639386}
-  - component: {fileID: 1657639389}
   - component: {fileID: 1657639388}
+  - component: {fileID: 1657639389}
   m_Layer: 0
   m_Name: RoomArea
   m_TagString: Untagged
@@ -18920,7 +18921,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1657639385}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 91a45d768b2f32c44b0ffe6c2152fa45, type: 3}
+  m_Script: {fileID: 11500000, guid: 2c253fd0b9f0fed4d838dfccbbe3cda1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerTrigger2D
 --- !u!1 &1769767493
@@ -19011,7 +19012,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1769767493}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 91a45d768b2f32c44b0ffe6c2152fa45, type: 3}
+  m_Script: {fileID: 11500000, guid: 2c253fd0b9f0fed4d838dfccbbe3cda1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerTrigger2D
 --- !u!1 &1817091852
@@ -19023,8 +19024,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1817091853}
-  - component: {fileID: 1817091856}
   - component: {fileID: 1817091855}
+  - component: {fileID: 1817091856}
   m_Layer: 3
   m_Name: DoorTrigger
   m_TagString: Untagged
@@ -19102,10 +19103,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 1817091852}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 64913f308f08c5e4193c79a5aded647b, type: 3}
+  m_Script: {fileID: 11500000, guid: 9e47861a9729e404abe47c60c718be29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LookedDoor
   doorObject: {fileID: 1529907291}
+  lockID: 0
 --- !u!1 &1884442242
 GameObject:
   m_ObjectHideFlags: 0
@@ -19319,7 +19321,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1920517197}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 91a45d768b2f32c44b0ffe6c2152fa45, type: 3}
+  m_Script: {fileID: 11500000, guid: 2c253fd0b9f0fed4d838dfccbbe3cda1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerTrigger2D
 --- !u!1 &1944070985
@@ -19592,7 +19594,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2037343353}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 91a45d768b2f32c44b0ffe6c2152fa45, type: 3}
+  m_Script: {fileID: 11500000, guid: 2c253fd0b9f0fed4d838dfccbbe3cda1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerTrigger2D
 --- !u!1 &2061078888

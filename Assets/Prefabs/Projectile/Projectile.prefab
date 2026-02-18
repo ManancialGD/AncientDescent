@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3858906183372380660}
-  - component: {fileID: 5974231696423402398}
+  - component: {fileID: 6558083027741856034}
   - component: {fileID: 5694309964753349771}
   m_Layer: 3
   m_Name: Projectile
@@ -34,7 +34,7 @@ Transform:
   - {fileID: 428006937842886196}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5974231696423402398
+--- !u!114 &6558083027741856034
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -43,13 +43,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 350199182344145637}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b99ff7e7949dd994e99d48657a24af82, type: 3}
+  m_Script: {fileID: 11500000, guid: 73993b81f4d7b3f47a32a85cd29cda1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Projectile
   ShowTopMostFoldoutHeaderGroup: 1
-  knockback: 350
-  speed: 350
-  radius: 3
+  knockback: 260
+  speed: 280
+  radius: 0.2
   lifetime: 2
   enemyMask:
     serializedVersion: 2

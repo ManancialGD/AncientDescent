@@ -693,14 +693,15 @@ GameObject:
   - component: {fileID: 5459610229958978884}
   - component: {fileID: 3634696626475588916}
   - component: {fileID: 5061799187410905571}
-  - component: {fileID: 4920732816238005455}
+  - component: {fileID: 2586867566552290629}
+  - component: {fileID: 1482861251391908034}
+  - component: {fileID: 6769171167584783609}
   - component: {fileID: 7642242659886791547}
   - component: {fileID: 2142362819506703452}
-  - component: {fileID: 3115091144743950427}
-  - component: {fileID: 4879912199065982833}
-  - component: {fileID: 5786864477340658449}
   - component: {fileID: 823735207669513444}
-  - component: {fileID: 3477665474273301553}
+  - component: {fileID: 4879912199065982833}
+  - component: {fileID: 3115091144743950427}
+  - component: {fileID: 6414192721302028945}
   m_Layer: 3
   m_Name: Player
   m_TagString: Untagged
@@ -739,7 +740,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   ShowTopMostFoldoutHeaderGroup: 1
-  shootCooldown: 0.2
   projectilePrefab: {fileID: 350199182344145637, guid: bd1f5ad0cbda44f4dbdeedace067f1db, type: 3}
   firePoint: {fileID: 1942321294053901616}
   muzzleFlashAnimator: {fileID: 5717565050735993023}
@@ -772,10 +772,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
   ShowTopMostFoldoutHeaderGroup: 1
-  maxSpeed: 80
-  acceleration: 15
-  friction: 8
---- !u!114 &4920732816238005455
+--- !u!114 &2586867566552290629
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -784,11 +781,42 @@ MonoBehaviour:
   m_GameObject: {fileID: 7092374703096096449}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0f4788908f799814a9e3a04c2c7e5249, type: 3}
+  m_Script: {fileID: 11500000, guid: 6baff5b3c44ce8b45a696be52a6bc5b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerInventory
+  ShowTopMostFoldoutHeaderGroup: 1
+--- !u!114 &1482861251391908034
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7092374703096096449}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b24d2617426d0e44e8d609c41f75ec8a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerStats
+  ShowTopMostFoldoutHeaderGroup: 1
+  startMaxHealth: 100
+  startMoveSpeed: 80
+  startAcceleration: 15
+  startFriction: 8
+  startShootRate: 0.2
+--- !u!114 &6769171167584783609
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7092374703096096449}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fc86d374d60f014e815e6fc1d051cf2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthModule
   ShowTopMostFoldoutHeaderGroup: 1
-  <MaxHealth>k__BackingField: 100
+  defaultMaxHealth: 100
   CurrentHealth:
     m_InternalValue: 0
   onDamaged:
@@ -864,31 +892,28 @@ CapsuleCollider2D:
   m_Offset: {x: 0, y: -1}
   m_Size: {x: 16, y: 16}
   m_Direction: 0
---- !u!114 &3115091144743950427
-MonoBehaviour:
+--- !u!95 &823735207669513444
+Animator:
+  serializedVersion: 7
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7092374703096096449}
   m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 2570333801
-  InScenePlacedSourceGlobalObjectIdHash: 0
-  DeferredDespawnTick: 0
-  Ownership: 1
-  AlwaysReplicateAsRoot: 0
-  SynchronizeTransform: 1
-  ActiveSceneSynchronization: 0
-  SceneMigrationSynchronization: 1
-  SpawnWithObservers: 1
-  DontDestroyWithOwner: 0
-  AutoObjectParentSync: 1
-  SyncOwnerTransformWhenParented: 1
-  AllowOwnerToParent: 0
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: b47623e51ef1c4546af640e20d7cb017, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!114 &4879912199065982833
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -935,7 +960,7 @@ MonoBehaviour:
   SwitchTransformSpaceWhenParented: 0
   Interpolate: 1
   SlerpPosition: 0
---- !u!114 &5786864477340658449
+--- !u!114 &3115091144743950427
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -944,44 +969,34 @@ MonoBehaviour:
   m_GameObject: {fileID: 7092374703096096449}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d296030268272ba43932a26e384573d0, type: 3}
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
+  GlobalObjectIdHash: 2570333801
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
+--- !u!114 &6414192721302028945
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7092374703096096449}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1df3ac264ee51b459c872d90dbcc7a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerCameraTarget
-  ShowTopMostFoldoutHeaderGroup: 1
---- !u!95 &823735207669513444
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7092374703096096449}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: b47623e51ef1c4546af640e20d7cb017, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
---- !u!114 &3477665474273301553
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7092374703096096449}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 34af2f2247cdae349ba255f7c5a2072a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerKeys
   ShowTopMostFoldoutHeaderGroup: 1
 --- !u!1 &7427259735991570906
 GameObject:

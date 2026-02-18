@@ -102,13 +102,14 @@ GameObject:
   - component: {fileID: 4159026194519580104}
   - component: {fileID: 8724998936546935750}
   - component: {fileID: 5206749764111787848}
-  - component: {fileID: -8484699277101579264}
+  - component: {fileID: 1759375796926389444}
+  - component: {fileID: 8143704077262238747}
+  - component: {fileID: 8541168804513857312}
+  - component: {fileID: 4874518303193282611}
+  - component: {fileID: 1991877673892276363}
   - component: {fileID: 7390329698100664069}
   - component: {fileID: -754252185678397054}
-  - component: {fileID: 1991877673892276363}
   - component: {fileID: 50346705079099183}
-  - component: {fileID: 4874518303193282611}
-  - component: {fileID: 1759375796926389444}
   m_Layer: 6
   m_Name: MeleeEnemy
   m_TagString: Untagged
@@ -172,7 +173,7 @@ MonoBehaviour:
   moveSpeed: 95
   acceleration: 12
   friction: 8
---- !u!114 &-8484699277101579264
+--- !u!114 &1759375796926389444
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -181,11 +182,37 @@ MonoBehaviour:
   m_GameObject: {fileID: 8775893410314518539}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0f4788908f799814a9e3a04c2c7e5249, type: 3}
+  m_Script: {fileID: 11500000, guid: bd3978cea763efd4b935a13ac46baa04, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MeleeEnemyAnimations
+  ShowTopMostFoldoutHeaderGroup: 1
+--- !u!114 &8143704077262238747
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8775893410314518539}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 992e19a303dcdfb41a4aab040f83b6e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyStats
+  maxHealth: 100
+--- !u!114 &8541168804513857312
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8775893410314518539}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fc86d374d60f014e815e6fc1d051cf2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthModule
   ShowTopMostFoldoutHeaderGroup: 1
-  <MaxHealth>k__BackingField: 100
+  defaultMaxHealth: 100
   CurrentHealth:
     m_InternalValue: 0
   onDamaged:
@@ -197,6 +224,55 @@ MonoBehaviour:
   onDied:
     m_PersistentCalls:
       m_Calls: []
+--- !u!95 &4874518303193282611
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8775893410314518539}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 60ca3a33c9efcd743a05f0e81bc7851c, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!50 &1991877673892276363
+Rigidbody2D:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8775893410314518539}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!70 &7390329698100664069
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -246,7 +322,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 257225982
+  GlobalObjectIdHash: 3405839324
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -259,33 +335,6 @@ MonoBehaviour:
   AutoObjectParentSync: 1
   SyncOwnerTransformWhenParented: 1
   AllowOwnerToParent: 0
---- !u!50 &1991877673892276363
-Rigidbody2D:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8775893410314518539}
-  m_BodyType: 0
-  m_Simulated: 1
-  m_UseFullKinematicContacts: 0
-  m_UseAutoMass: 0
-  m_Mass: 1
-  m_LinearDamping: 0
-  m_AngularDamping: 0.05
-  m_GravityScale: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_Interpolate: 0
-  m_SleepingMode: 1
-  m_CollisionDetection: 0
-  m_Constraints: 0
 --- !u!114 &50346705079099183
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -332,41 +381,6 @@ MonoBehaviour:
   SwitchTransformSpaceWhenParented: 0
   Interpolate: 1
   SlerpPosition: 0
---- !u!95 &4874518303193282611
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8775893410314518539}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 60ca3a33c9efcd743a05f0e81bc7851c, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
---- !u!114 &1759375796926389444
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8775893410314518539}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bd3978cea763efd4b935a13ac46baa04, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MeleeEnemyAnimations
-  ShowTopMostFoldoutHeaderGroup: 1
 --- !u!1001 &1981479155778847778
 PrefabInstance:
   m_ObjectHideFlags: 0

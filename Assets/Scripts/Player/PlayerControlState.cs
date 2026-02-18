@@ -1,4 +1,4 @@
-public enum PlayerControlState
+﻿public enum PlayerControlState
 {
     Gameplay,
     Transition,

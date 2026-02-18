@@ -1,0 +1,28 @@
+﻿using Unity.Netcode;
+using UnityEngine;
+
+public class LookedDoor : MonoBehaviour
+{
+    [SerializeField] private GameObject doorObject;
+    [SerializeField] private int lockID;
+
+    public void TryOpen(PlayerInventory inventory)
+    {
+        if (!NetworkManager.Singleton.IsServer) return;
+
+        if (inventory.HasQuestItem(lockID))
+        {
+            doorObject.SetActive(false);
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (!NetworkManager.Singleton.IsServer) return;
+
+        if (collision.gameObject.TryGetComponent(out PlayerInventory inventory))
+        {
+            TryOpen(inventory);
+        }
+    }
+}
