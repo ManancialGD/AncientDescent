@@ -5,20 +5,31 @@ using UnityEngine;
 public class SafeRoomBehaviour : RoomBehaviour
 {
     [SerializeField] private float healPerSecond = 10f;
-
-    protected override void SubscribeToEvents() { }
-
-    protected override void UnsubscribeFromEvents() { }
-
+    private bool isPlayerInside = false;
+    protected override void SubscribeToEvents()
+    {
+        roomController.OnPlayerEnterRoom += OnPlayerEnter;
+        roomController.OnPlayerExitRoom += OnPlayerExit;
+    }
+    protected override void UnsubscribeFromEvents()
+    {
+        roomController.OnPlayerEnterRoom -= OnPlayerEnter;
+        roomController.OnPlayerExitRoom -= OnPlayerExit;
+    }
+    private void OnPlayerEnter(ulong playerId)
+    {
+        isPlayerInside = true;
+    }
+    private void OnPlayerExit(ulong playerId)
+    {
+        if (roomController.GetPlayersInRoom().Count() == 0)
+            isPlayerInside = false;
+    }
     private void FixedUpdate()
     {
         if (NetworkManager.Singleton == null) return;
         if (!NetworkManager.Singleton.IsServer) return;
-
-        if (!roomController.GetPlayersInRoom().Any())
-        {
-            return;
-        }
+        if (!isPlayerInside) return;
 
         HealAllPlayers();
     }
@@ -29,12 +40,10 @@ public class SafeRoomBehaviour : RoomBehaviour
         {
             if (NetworkManager.Singleton.ConnectedClients.TryGetValue(playerId, out var client))
             {
-                var playerObj = client.PlayerObject;
-                if (playerObj != null)
+                var playerObj = client.PlayerObject; if (playerObj != null)
                 {
                     if (playerObj.TryGetComponent<HealthModule>(out var health))
                         health.Heal(healPerSecond * Time.fixedDeltaTime);
-
                 }
             }
         }

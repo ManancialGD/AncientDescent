@@ -52,6 +52,27 @@ public class PlayerInventory : NetworkBehaviour
         return false;
     }
 
+    public int ConsumeQuestItems(int lockId, int maxAmount)
+    {
+        if (!IsServer) return 0;
+
+        int removed = 0;
+
+        for (int i = questItems.Count - 1; i >= 0; i--)
+        {
+            if (questItems[i].LockId == lockId)
+            {
+                questItems.RemoveAt(i);
+                removed++;
+
+                if (removed >= maxAmount)
+                    break;
+            }
+        }
+
+        return removed;
+    }
+
 
     private void ApplyItem(ItemInstance item)
     {

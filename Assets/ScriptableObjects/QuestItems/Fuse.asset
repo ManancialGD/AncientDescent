@@ -9,12 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e9db64c644e6b5941ac545baa04d9304, type: 3}
-  m_Name: Shooter
-  m_EditorClassIdentifier: Assembly-CSharp::StatItemDefinition
-  <ItemName>k__BackingField: Shooter
+  m_Script: {fileID: 11500000, guid: aa51d693d5e31e84ea55f452040f7c60, type: 3}
+  m_Name: Fuse
+  m_EditorClassIdentifier: Assembly-CSharp::QuestItemDefinition
+  <ItemName>k__BackingField: 
   <Icon>k__BackingField: {fileID: 0}
-  modifiers:
-  - statType: 4
-    value: 0.2
-    modifierType: 2

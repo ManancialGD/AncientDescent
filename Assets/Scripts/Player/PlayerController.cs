@@ -32,6 +32,10 @@ public class PlayerController : NetworkBehaviour
 
     public PlayerControlState PlayerState => playerState.Value;
 
+    private bool isFiring;
+    private float clientLastShootTime;
+
+
     private void Awake()
     {
         stats = GetComponent<PlayerStats>();
@@ -48,7 +52,10 @@ public class PlayerController : NetworkBehaviour
 
         controls.Player.Move.performed += OnMovePerformed;
         controls.Player.Move.canceled += OnMoveCanceled;
-        controls.Player.Fire.performed += OnFirePerformed;
+
+        controls.Player.Fire.started += OnFireStarted;
+        controls.Player.Fire.canceled += OnFireCanceled;
+
 
         controls.Enable();
     }
@@ -59,7 +66,10 @@ public class PlayerController : NetworkBehaviour
 
         controls.Player.Move.performed -= OnMovePerformed;
         controls.Player.Move.canceled -= OnMoveCanceled;
-        controls.Player.Fire.performed -= OnFirePerformed;
+
+        controls.Player.Fire.started -= OnFireStarted;
+        controls.Player.Fire.canceled -= OnFireCanceled;
+
 
         controls.Disable();
     }
@@ -83,9 +93,30 @@ public class PlayerController : NetworkBehaviour
         MoveInput = Vector2.zero;
     }
 
-    private void OnFirePerformed(InputAction.CallbackContext ctx)
+    private void OnFireStarted(InputAction.CallbackContext ctx)
     {
-        if (playerState.Value != PlayerControlState.Gameplay)
+        isFiring = true;
+    }
+
+    private void OnFireCanceled(InputAction.CallbackContext ctx)
+    {
+        isFiring = false;
+    }
+
+    private void Update()
+    {
+        if (!IsOwner) return;
+        if (!isFiring) return;
+        if (playerState.Value != PlayerControlState.Gameplay) return;
+
+        TryShoot();
+    }
+
+    private void TryShoot()
+    {
+        float currentTime = NetworkManager.Singleton.ServerTime.TimeAsFloat;
+
+        if (currentTime < clientLastShootTime + ShootRate)
             return;
 
         if (Camera.main == null || firePoint == null)
@@ -95,7 +126,10 @@ public class PlayerController : NetworkBehaviour
         Vector2 mouseWorldPos = Camera.main.ScreenToWorldPoint(mouseScreenPos);
         Vector2 shootDir = (mouseWorldPos - (Vector2)firePoint.position).normalized;
 
-        if (shootDir == Vector2.zero) return;
+        if (shootDir == Vector2.zero)
+            return;
+
+        clientLastShootTime = currentTime;
 
         ShootServerRpc(firePoint.position, shootDir);
     }

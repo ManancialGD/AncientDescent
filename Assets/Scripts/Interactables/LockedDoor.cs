@@ -10,7 +10,7 @@ public class LookedDoor : MonoBehaviour
     {
         if (!NetworkManager.Singleton.IsServer) return;
 
-        if (inventory.HasQuestItem(lockID))
+        if (inventory.ConsumeQuestItems(lockID, 1) > 0)
         {
             doorObject.SetActive(false);
         }

@@ -802,7 +802,7 @@ MonoBehaviour:
   startMoveSpeed: 80
   startAcceleration: 15
   startFriction: 8
-  startShootRate: 0.2
+  startShootRate: 0.4
 --- !u!114 &6769171167584783609
 MonoBehaviour:
   m_ObjectHideFlags: 0
