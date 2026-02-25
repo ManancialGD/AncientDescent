@@ -1,86 +1,76 @@
-﻿using Unity.Netcode;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.InputSystem;
 
-[RequireComponent(typeof(Rigidbody2D), typeof(NetworkObject))]
+[RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(PlayerMovement))]
 [RequireComponent(typeof(HealthModule))]
 [RequireComponent(typeof(Animator))]
-public class PlayerController : NetworkBehaviour
+public class PlayerController : MonoBehaviour
 {
+    public HealthModule Health
+    {
+        get
+        {
+            health ??= GetComponent<HealthModule>();
+            return health;
+        }
+    }
+
+    public PlayerMovement Movement
+    {
+        get
+        {
+            movement ??= GetComponent<PlayerMovement>();
+            return movement;
+        }
+    }
+    public Vector2 MoveInput { get; private set; }
+    public PlayerControlState PlayerState => playerState;
+
     private PlayerStats stats;
     private float ShootRate => stats.GetStat(StatType.ShootRate);
     public GameObject projectilePrefab;
     public Transform firePoint;
     public Animator muzzleFlashAnimator;
-
     private PlayerControls controls;
-    public HealthModule Health { get; private set; }
-
-    public Vector2 MoveInput { get; private set; }
-
     private float lastShootTime;
-
-    private NetworkVariable<PlayerControlState> playerState =
-        new(
-            PlayerControlState.Gameplay,
-            NetworkVariableReadPermission.Everyone,
-            NetworkVariableWritePermission.Server
-        );
-
-    public PlayerMovement Movement { get; private set; }
-
-    public PlayerControlState PlayerState => playerState.Value;
-
+    private PlayerControlState playerState = PlayerControlState.Gameplay;
     private bool isFiring;
-    private float clientLastShootTime;
-
+    private PlayerMovement movement;
+    private HealthModule health;
 
     private void Awake()
     {
         stats = GetComponent<PlayerStats>();
-    }
-
-    public override void OnNetworkSpawn()
-    {
-        Movement = GetComponent<PlayerMovement>();
-        Health = GetComponent<HealthModule>();
-
-        if (!IsOwner) return;
+        movement = GetComponent<PlayerMovement>();
+        health = GetComponent<HealthModule>();
 
         controls = new PlayerControls();
 
         controls.Player.Move.performed += OnMovePerformed;
         controls.Player.Move.canceled += OnMoveCanceled;
-
         controls.Player.Fire.started += OnFireStarted;
         controls.Player.Fire.canceled += OnFireCanceled;
 
-
         controls.Enable();
+
+        Camera.main.GetComponent<CameraFollow>()?.SetFollowTarget(transform);
     }
 
-    public override void OnNetworkDespawn()
+    private void OnDestroy()
     {
-        if (!IsOwner) return;
-
         controls.Player.Move.performed -= OnMovePerformed;
         controls.Player.Move.canceled -= OnMoveCanceled;
-
         controls.Player.Fire.started -= OnFireStarted;
         controls.Player.Fire.canceled -= OnFireCanceled;
-
 
         controls.Disable();
     }
 
-
     private void FixedUpdate()
     {
-        if (!IsOwner) return;
-        if (playerState.Value != PlayerControlState.Gameplay) return;
-
-        SubmitMoveInputServerRpc(MoveInput.normalized);
+        if (playerState != PlayerControlState.Gameplay) return;
+        Movement.ServerMove(MoveInput.normalized);
     }
 
     private void OnMovePerformed(InputAction.CallbackContext ctx)
@@ -105,18 +95,15 @@ public class PlayerController : NetworkBehaviour
 
     private void Update()
     {
-        if (!IsOwner) return;
-        if (!isFiring) return;
-        if (playerState.Value != PlayerControlState.Gameplay) return;
-
+        if (!isFiring || playerState != PlayerControlState.Gameplay) return;
         TryShoot();
     }
 
     private void TryShoot()
     {
-        float currentTime = NetworkManager.Singleton.ServerTime.TimeAsFloat;
+        float currentTime = Time.time;
 
-        if (currentTime < clientLastShootTime + ShootRate)
+        if (currentTime < lastShootTime + ShootRate)
             return;
 
         if (Camera.main == null || firePoint == null)
@@ -129,41 +116,23 @@ public class PlayerController : NetworkBehaviour
         if (shootDir == Vector2.zero)
             return;
 
-        clientLastShootTime = currentTime;
+        lastShootTime = currentTime;
 
-        ShootServerRpc(firePoint.position, shootDir);
+        Shoot(shootDir);
     }
 
-    [ClientRpc]
-    private void PlayMuzzleClientRpc()
+    private void Shoot(Vector2 direction)
     {
-        muzzleFlashAnimator.SetTrigger("fire");
-    }
-
-    [ServerRpc]
-    private void SubmitMoveInputServerRpc(Vector2 input)
-    {
-        Movement.ServerMove(input);
-    }
-
-    [ServerRpc]
-    private void ShootServerRpc(Vector2 position, Vector2 direction)
-    {
-        if (NetworkManager.Singleton.ServerTime.TimeAsFloat < lastShootTime + ShootRate) return;
-
-        lastShootTime = NetworkManager.Singleton.ServerTime.TimeAsFloat;
-        GameObject proj = Instantiate(projectilePrefab, position, Quaternion.identity);
+        GameObject proj = Instantiate(projectilePrefab, firePoint.position, Quaternion.identity);
         proj.GetComponent<Projectile>().Initialize(direction, Health);
-        proj.GetComponent<NetworkObject>().Spawn();
 
-        PlayMuzzleClientRpc();
+        if (muzzleFlashAnimator != null)
+            muzzleFlashAnimator.SetTrigger("fire");
     }
 
     public void SetPlayerState(PlayerControlState newState)
     {
-        if (!IsServer) return;
-
-        playerState.Value = newState;
+        playerState = newState;
 
         if (newState != PlayerControlState.Gameplay)
         {

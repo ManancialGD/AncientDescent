@@ -22,4 +22,3 @@ public struct DamageInfo
         StunTime = stunTime;
     }
 }
-

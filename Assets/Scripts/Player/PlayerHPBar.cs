@@ -1,5 +1,4 @@
-﻿using Unity.Netcode;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PlayerHPBar : MonoBehaviour
 {
@@ -8,14 +7,8 @@ public class PlayerHPBar : MonoBehaviour
 
     private void Awake()
     {
-        NetworkObject netObj = GetComponentInParent<NetworkObject>();
-
-        if (!netObj.IsOwner)
-            gameObject.SetActive(false);
-
         healthModule = GetComponentInParent<HealthModule>();
     }
-
     private void Start()
     {
         UpdateFill();
@@ -53,10 +46,9 @@ public class PlayerHPBar : MonoBehaviour
     {
         if (healthModule.MaxHealth <= 0)
             return;
-        float p = healthModule.CurrentHealth.Value / healthModule.MaxHealth;
+        float p = healthModule.CurrentHealth / healthModule.MaxHealth;
         Vector3 s = new(1, 1, 1);
         s.x = p;
-
         fill.localScale = s;
     }
 }

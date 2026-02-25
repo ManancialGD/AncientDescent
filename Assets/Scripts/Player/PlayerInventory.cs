@@ -1,15 +1,14 @@
 ﻿using System.Collections.Generic;
-using Unity.Netcode;
+using UnityEngine;
 
-public class PlayerInventory : NetworkBehaviour
+public class PlayerInventory : MonoBehaviour
 {
     private List<ItemInstance> items = new();
     private List<QuestItemInstance> questItems = new();
     private HealthModule health;
-
     private PlayerStats stats;
 
-    public override void OnNetworkSpawn()
+    private void Awake()
     {
         stats = GetComponent<PlayerStats>();
         health = GetComponent<HealthModule>();
@@ -17,8 +16,6 @@ public class PlayerInventory : NetworkBehaviour
 
     public void AddItem(StatItemDefinition statItemDef)
     {
-        if (!NetworkManager.Singleton.IsServer) return;
-
         var instance = new ItemInstance
         {
             Definition = statItemDef,
@@ -26,21 +23,17 @@ public class PlayerInventory : NetworkBehaviour
         };
 
         items.Add(instance);
-
         ApplyItem(instance);
     }
 
     public void AddQuestItem(QuestItemDefinition def, int lockId)
     {
-        if (!IsServer) return;
-
         questItems.Add(new QuestItemInstance
         {
             Definition = def,
             LockId = lockId
         });
     }
-
 
     public bool HasQuestItem(int lockId)
     {
@@ -54,8 +47,6 @@ public class PlayerInventory : NetworkBehaviour
 
     public int ConsumeQuestItems(int lockId, int maxAmount)
     {
-        if (!IsServer) return 0;
-
         int removed = 0;
 
         for (int i = questItems.Count - 1; i >= 0; i--)
@@ -72,7 +63,6 @@ public class PlayerInventory : NetworkBehaviour
 
         return removed;
     }
-
 
     private void ApplyItem(ItemInstance item)
     {

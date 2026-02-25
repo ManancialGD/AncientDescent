@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using Unity.Netcode;
 using UnityEngine.SceneManagement;
 
 public class MainMenuController : MonoBehaviour
@@ -29,23 +28,15 @@ public class MainMenuController : MonoBehaviour
 
     private void OnStartClicked()
     {
-        if (!NetworkManager.Singleton.IsListening)
-        {
-            NetworkManager.Singleton.StartHost();
-        }
-
-        NetworkManager.Singleton.SceneManager.LoadScene(
-            dungeonSceneName,
-            LoadSceneMode.Single
-        );
-
+        SceneManager.LoadScene(dungeonSceneName);
     }
 
     public void OnQuitClicked()
     {
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
-#endif
+#else
         Application.Quit();
+#endif
     }
 }

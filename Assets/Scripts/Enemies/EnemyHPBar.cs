@@ -8,10 +8,6 @@ public class EnemyHPBar : MonoBehaviour
     private void Awake()
     {
         healthModule = GetComponentInParent<HealthModule>();
-    }
-
-    private void Start()
-    {
         UpdateFill();
     }
 
@@ -40,10 +36,9 @@ public class EnemyHPBar : MonoBehaviour
     {
         if (healthModule.MaxHealth <= 0)
             return;
-        float p = healthModule.CurrentHealth.Value / healthModule.MaxHealth;
+        float p = healthModule.CurrentHealth / healthModule.MaxHealth;
         Vector3 s = new(1, 1, 1);
         s.x = p;
-
         fill.localScale = s;
     }
 }

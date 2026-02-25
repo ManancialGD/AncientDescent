@@ -1,8 +1,7 @@
 using TMPro;
-using Unity.Netcode;
 using UnityEngine;
 
-public class Engine : NetworkBehaviour
+public class Engine : MonoBehaviour
 {
     [SerializeField] private GameObject doorObject;
     [SerializeField] private int fuseNeeded = 3;
@@ -14,7 +13,7 @@ public class Engine : NetworkBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (!NetworkManager.Singleton.IsServer || unlocked) return;
+        if (unlocked) return;
 
         if (collision.TryGetComponent(out PlayerInventory inventory))
         {
@@ -32,8 +31,8 @@ public class Engine : NetworkBehaviour
         if (consumed > 0)
         {
             currentFuses += consumed;
-            fuseCountText.text = $"{currentFuses}/{fuseNeeded}";
-            Debug.Log($"Inserted {consumed} fuse(s): {currentFuses}/{fuseNeeded}");
+            if (fuseCountText != null)
+                fuseCountText.text = $"{currentFuses}/{fuseNeeded}";
         }
 
         if (currentFuses >= fuseNeeded)

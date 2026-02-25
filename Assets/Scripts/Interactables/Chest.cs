@@ -1,5 +1,4 @@
-﻿using Unity.Netcode;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Chest : MonoBehaviour
 {
@@ -20,7 +19,6 @@ public class Chest : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (!NetworkManager.Singleton.IsServer) return;
         if (isOpened || !canOpen) return;
 
         if (collision.gameObject.TryGetComponent(out PlayerInventory inventory))

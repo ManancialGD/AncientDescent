@@ -1,8 +1,7 @@
-﻿using Unity.Netcode;
-using UnityEngine;
+﻿using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
-public class EnemyMovement : NetworkBehaviour
+public class EnemyMovement : MonoBehaviour
 {
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float acceleration = 12f;
@@ -17,19 +16,15 @@ public class EnemyMovement : NetworkBehaviour
         Rb.freezeRotation = true;
     }
 
-    public void ServerMoveTowards(Vector2 targetPosition)
+    public void MoveTowards(Vector2 targetPosition)
     {
-        if (!IsServer) return;
-
         Vector2 dir = (targetPosition - (Vector2)transform.position).normalized;
-
         Vector2 impulse = Accelerate(dir, moveSpeed, acceleration);
         Rb.AddForce(impulse, ForceMode2D.Impulse);
     }
 
     private void FixedUpdate()
     {
-        if (!IsServer) return;
         ApplyFriction();
     }
 
@@ -62,7 +57,6 @@ public class EnemyMovement : NetworkBehaviour
 
     public void ApplyKnockback(Vector2 dir, float force)
     {
-        if (!IsServer) return;
         Rb.AddForce(dir.normalized * force, ForceMode2D.Impulse);
     }
 }

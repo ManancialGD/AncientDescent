@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -9,6 +8,7 @@ public class PortalRoomBehaviour : RoomBehaviour
 {
     [Header("Portal")]
     [SerializeField] private HealthModule portalHealthModule;
+
     [Header("Doors")]
     [SerializeField] private GameObject[] doorObjects;
 
@@ -23,7 +23,6 @@ public class PortalRoomBehaviour : RoomBehaviour
     [SerializeField] private UnityEvent OnPortalDestroyed;
 
     private Coroutine spawnRoutine;
-
     private YieldInstruction waitForSpawnRate;
 
     private bool isActive = false;
@@ -39,7 +38,7 @@ public class PortalRoomBehaviour : RoomBehaviour
 
     protected override void SubscribeToEvents()
     {
-        roomController.OnFirstPlayerEnterRoom += OnFirstPlayerEnterRoom;
+        roomController.OnPlayerEnterRoom += OnPlayerEnterRoom;
         if (portalHealthModule != null)
         {
             portalHealthModule.Died += HandlePortalDestruction;
@@ -48,27 +47,24 @@ public class PortalRoomBehaviour : RoomBehaviour
 
     protected override void UnsubscribeFromEvents()
     {
-        roomController.OnFirstPlayerEnterRoom -= OnFirstPlayerEnterRoom;
+        roomController.OnPlayerEnterRoom -= OnPlayerEnterRoom;
         if (portalHealthModule != null)
         {
             portalHealthModule.Died -= HandlePortalDestruction;
         }
     }
 
-    private void OnFirstPlayerEnterRoom()
+    private void OnPlayerEnterRoom()
     {
-        if (!NetworkManager.Singleton.IsServer || isActive || isCompleted) return;
+        if (isActive || isCompleted) return;
         ActivateCombat();
     }
 
     private void ActivateCombat()
     {
         isActive = true;
-
         CloseDoors();
-
         spawnRoutine = StartCoroutine(SpawnEnemiesRoutine());
-
         OnCombatStarted?.Invoke();
     }
 
@@ -78,38 +74,15 @@ public class PortalRoomBehaviour : RoomBehaviour
         {
             door.SetActive(true);
         }
-
-        CloseDoorsClientRpc();
-    }
-
-    [ClientRpc]
-    private void CloseDoorsClientRpc()
-    {
-        foreach (GameObject door in doorObjects)
-        {
-            door.SetActive(true);
-        }
     }
 
     private void OnEnemyDied(HealthModule deadEnemy)
     {
-        if (!NetworkManager.Singleton.IsServer) return;
-
         deadEnemy.Died -= OnEnemyDied;
         spawnedEnemies.Remove(deadEnemy.gameObject);
     }
 
     private void OpenDoors()
-    {
-        foreach (GameObject door in doorObjects)
-        {
-            door.SetActive(false);
-        }
-        OpenDoorsClientRpc();
-    }
-
-    [ClientRpc]
-    private void OpenDoorsClientRpc()
     {
         foreach (GameObject door in doorObjects)
         {
@@ -135,14 +108,7 @@ public class PortalRoomBehaviour : RoomBehaviour
 
     private void SpawnEnemy()
     {
-        GameObject enemy = Instantiate(
-            enemyPrefab,
-            spawnPoint.position,
-            Quaternion.identity
-        );
-
-        enemy.GetComponent<NetworkObject>().Spawn();
-
+        GameObject enemy = Instantiate(enemyPrefab, spawnPoint.position, Quaternion.identity);
         spawnedEnemies.Add(enemy);
 
         if (enemy.TryGetComponent<HealthModule>(out var health))
@@ -153,9 +119,6 @@ public class PortalRoomBehaviour : RoomBehaviour
 
     private void HandlePortalDestruction(HealthModule _)
     {
-        if (!NetworkManager.Singleton.IsServer)
-            return;
-
         isPortalDestroyed = true;
 
         if (spawnRoutine != null)
@@ -166,13 +129,11 @@ public class PortalRoomBehaviour : RoomBehaviour
 
         foreach (var enemy in spawnedEnemies.ToList())
         {
-            enemy.GetComponent<HealthModule>()?.Damage(
-                null,
-                9999f,
-                0f
-            );
+            if (enemy != null)
+                enemy.GetComponent<HealthModule>()?.Damage(null, 9999f, 0f);
         }
 
         OpenDoors();
+        OnPortalDestroyed?.Invoke();
     }
 }

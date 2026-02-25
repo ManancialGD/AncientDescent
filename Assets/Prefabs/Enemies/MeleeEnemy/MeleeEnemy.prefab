@@ -26,7 +26,7 @@ Transform:
   m_GameObject: {fileID: 3002168680777893292}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -4, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -90,7 +90,7 @@ SpriteRenderer:
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
-  m_SpriteSortPoint: 0
+  m_SpriteSortPoint: 1
 --- !u!1 &8775893410314518539
 GameObject:
   m_ObjectHideFlags: 0
@@ -108,8 +108,6 @@ GameObject:
   - component: {fileID: 4874518303193282611}
   - component: {fileID: 1991877673892276363}
   - component: {fileID: 7390329698100664069}
-  - component: {fileID: -754252185678397054}
-  - component: {fileID: 50346705079099183}
   m_Layer: 6
   m_Name: MeleeEnemy
   m_TagString: Untagged
@@ -146,7 +144,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04a558583a1c3844c98d2642b21b2119, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MeleeEnemy
-  ShowTopMostFoldoutHeaderGroup: 1
   attackRange: 18.7
   attackImpulse: 120
   attackRadius: 8
@@ -169,7 +166,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e9dbe46e43b549d4483d7cd341afb6a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyMovement
-  ShowTopMostFoldoutHeaderGroup: 1
   moveSpeed: 95
   acceleration: 12
   friction: 8
@@ -185,7 +181,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd3978cea763efd4b935a13ac46baa04, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MeleeEnemyAnimations
-  ShowTopMostFoldoutHeaderGroup: 1
 --- !u!114 &8143704077262238747
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -211,10 +206,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4fc86d374d60f014e815e6fc1d051cf2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthModule
-  ShowTopMostFoldoutHeaderGroup: 1
   defaultMaxHealth: 100
-  CurrentHealth:
-    m_InternalValue: 0
   onDamaged:
     m_PersistentCalls:
       m_Calls: []
@@ -307,80 +299,9 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
-  m_Size: {x: 16, y: 16}
-  m_Direction: 0
---- !u!114 &-754252185678397054
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8775893410314518539}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 3405839324
-  InScenePlacedSourceGlobalObjectIdHash: 0
-  DeferredDespawnTick: 0
-  Ownership: 1
-  AlwaysReplicateAsRoot: 0
-  SynchronizeTransform: 1
-  ActiveSceneSynchronization: 0
-  SceneMigrationSynchronization: 1
-  SpawnWithObservers: 1
-  DontDestroyWithOwner: 0
-  AutoObjectParentSync: 1
-  SyncOwnerTransformWhenParented: 1
-  AllowOwnerToParent: 0
---- !u!114 &50346705079099183
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8775893410314518539}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e96cb6065543e43c4a752faaa1468eb1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.Components.NetworkTransform
-  ShowTopMostFoldoutHeaderGroup: 1
-  NetworkTransformExpanded: 0
-  AutoOwnerAuthorityTickOffset: 1
-  PositionInterpolationType: 1
-  RotationInterpolationType: 0
-  ScaleInterpolationType: 0
-  PositionLerpSmoothing: 1
-  PositionMaxInterpolationTime: 0.1
-  RotationLerpSmoothing: 1
-  RotationMaxInterpolationTime: 0.1
-  ScaleLerpSmoothing: 1
-  ScaleMaxInterpolationTime: 0.1
-  AuthorityMode: 0
-  TickSyncChildren: 0
-  UseUnreliableDeltas: 0
-  SyncPositionX: 1
-  SyncPositionY: 1
-  SyncPositionZ: 1
-  SyncRotAngleX: 0
-  SyncRotAngleY: 0
-  SyncRotAngleZ: 0
-  SyncScaleX: 0
-  SyncScaleY: 0
-  SyncScaleZ: 0
-  PositionThreshold: 0.001
-  RotAngleThreshold: 0.01
-  ScaleThreshold: 0.01
-  UseQuaternionSynchronization: 0
-  UseQuaternionCompression: 0
-  UseHalfFloatPrecision: 0
-  InLocalSpace: 0
-  SwitchTransformSpaceWhenParented: 0
-  Interpolate: 1
-  SlerpPosition: 0
+  m_Offset: {x: 0.00000017991839, y: 1.5092651}
+  m_Size: {x: 14.767975, y: 11.010344}
+  m_Direction: 1
 --- !u!1001 &1981479155778847778
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -432,6 +353,10 @@ PrefabInstance:
     - target: {fileID: 7459338185660921533, guid: ccaac07f15c63534ca617230d6ce32c2, type: 3}
       propertyPath: m_Name
       value: EnemyHPBar
+      objectReference: {fileID: 0}
+    - target: {fileID: 8250741380156403622, guid: ccaac07f15c63534ca617230d6ce32c2, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

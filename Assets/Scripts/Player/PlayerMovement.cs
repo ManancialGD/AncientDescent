@@ -1,8 +1,7 @@
-﻿using Unity.Netcode;
-using UnityEngine;
+﻿using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody2D), typeof(NetworkObject))]
-public class PlayerMovement : NetworkBehaviour
+[RequireComponent(typeof(Rigidbody2D))]
+public class PlayerMovement : MonoBehaviour
 {
     private PlayerStats stats;
 
@@ -26,8 +25,6 @@ public class PlayerMovement : NetworkBehaviour
 
     public void ServerMove(Vector2 movementInput)
     {
-        if (!NetworkManager.Singleton.IsServer) return;
-
         movementInput = movementInput.normalized;
 
         Vector2 accumulatedForce = Vector2.zero;
@@ -84,11 +81,8 @@ public class PlayerMovement : NetworkBehaviour
         }
     }
 
-    // Server-side knockback
     public void ApplyKnockback(Vector2 direction, float force)
     {
-        if (!NetworkManager.Singleton.IsServer) return;
-
         RB.AddForce(direction.normalized * force, ForceMode2D.Impulse);
     }
 }

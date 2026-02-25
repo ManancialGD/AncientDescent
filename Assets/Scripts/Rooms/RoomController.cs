@@ -1,91 +1,42 @@
 ﻿using System;
 using System.Collections.Generic;
-using Unity.Netcode;
 using UnityEngine;
-public class RoomController : NetworkBehaviour
+
+public class RoomController : MonoBehaviour
 {
     [Header("Room Boundary")]
     [SerializeField] private PlayerTrigger2D boundaryTrigger;
-    public event Action<ulong> OnPlayerEnterRoom;
-    public event Action<ulong> OnPlayerExitRoom;
-    public event Action OnFirstPlayerEnterRoom;
-    public event Action OnLastPlayerExitRoom;
 
-    private readonly NetworkList<ulong> playersInRoom = new();
+    public event Action OnPlayerEnterRoom;
+    public event Action OnPlayerExitRoom;
 
-    public override void OnNetworkSpawn()
+    public bool HasPlayer => boundaryTrigger != null ? boundaryTrigger.HasPlayer : false;
+
+    private void Awake()
     {
-        if (NetworkManager.Singleton.IsServer)
+        if (boundaryTrigger != null)
         {
-            playersInRoom.OnListChanged += OnPlayersListChanged;
-
-            if (boundaryTrigger != null)
-            {
-                boundaryTrigger.OnPlayerEnter += OnBoundaryPlayerEnter;
-                boundaryTrigger.OnPlayerExit += OnBoundaryPlayerExit;
-                boundaryTrigger.OnFirstPlayerEnter += OnBoundaryFirstPlayerEnter;
-                boundaryTrigger.OnLastPlayerExit += OnBoundaryLastPlayerExit;
-            }
+            boundaryTrigger.OnPlayerEnter += OnBoundaryPlayerEnter;
+            boundaryTrigger.OnPlayerExit += OnBoundaryPlayerExit;
         }
-
     }
 
-    public override void OnNetworkDespawn()
+    private void OnDestroy()
     {
-        if (NetworkManager.Singleton.IsServer)
+        if (boundaryTrigger != null)
         {
-            playersInRoom.OnListChanged -= OnPlayersListChanged;
-
-            if (boundaryTrigger != null)
-            {
-                boundaryTrigger.OnPlayerEnter -= OnBoundaryPlayerEnter;
-                boundaryTrigger.OnPlayerExit -= OnBoundaryPlayerExit;
-                boundaryTrigger.OnFirstPlayerEnter -= OnBoundaryFirstPlayerEnter;
-                boundaryTrigger.OnLastPlayerExit -= OnBoundaryLastPlayerExit;
-            }
+            boundaryTrigger.OnPlayerEnter -= OnBoundaryPlayerEnter;
+            boundaryTrigger.OnPlayerExit -= OnBoundaryPlayerExit;
         }
-
     }
 
-    private void OnBoundaryPlayerEnter(ulong playerId)
+    private void OnBoundaryPlayerEnter()
     {
-        if (!playersInRoom.Contains(playerId))
-            playersInRoom.Add(playerId);
-
-        OnPlayerEnterRoom?.Invoke(playerId);
-
+        OnPlayerEnterRoom?.Invoke();
     }
 
-    private void OnBoundaryPlayerExit(ulong playerId)
+    private void OnBoundaryPlayerExit()
     {
-        if (NetworkManager.Singleton.IsServer)
-        {
-            if (playersInRoom.Contains(playerId))
-                playersInRoom.Remove(playerId);
-        }
-
-        OnPlayerExitRoom?.Invoke(playerId);
+        OnPlayerExitRoom?.Invoke();
     }
-
-    private void OnBoundaryFirstPlayerEnter()
-    {
-        OnFirstPlayerEnterRoom?.Invoke();
-    }
-
-    private void OnBoundaryLastPlayerExit()
-    {
-        OnLastPlayerExitRoom?.Invoke();
-    }
-
-    private void OnPlayersListChanged(NetworkListEvent<ulong> changeEvent)
-    {
-
-    }
-
-    public IEnumerable<ulong> GetPlayersInRoom()
-    {
-        foreach (var id in playersInRoom)
-            yield return id;
-    }
-
 }

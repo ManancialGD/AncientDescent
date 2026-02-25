@@ -1,52 +1,28 @@
 ﻿using System;
-using Unity.Netcode;
 using UnityEngine;
 
 public class PlayerTrigger2D : MonoBehaviour
 {
-    public event Action<ulong> OnPlayerEnter;
-    public event Action<ulong> OnPlayerExit;
-    public event Action OnFirstPlayerEnter;
-    public event Action OnLastPlayerExit;
+    public event Action OnPlayerEnter;
+    public event Action OnPlayerExit;
 
-    private int playerCount = 0;
+    public bool HasPlayer { get; private set; } = false;
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (!NetworkManager.Singleton.IsServer) return;
-
-        var playerNetObj = other.GetComponentInParent<NetworkObject>();
-        if (playerNetObj != null && playerNetObj.IsPlayerObject)
+        if (other.GetComponent<PlayerController>())
         {
-            ulong playerId = playerNetObj.OwnerClientId;
-
-            bool wasEmpty = playerCount == 0;
-            playerCount++;
-
-            OnPlayerEnter?.Invoke(playerId);
-
-            if (wasEmpty)
-                OnFirstPlayerEnter?.Invoke();
+            OnPlayerEnter?.Invoke();
+            HasPlayer = true;
         }
     }
 
     private void OnTriggerExit2D(Collider2D other)
     {
-        if (!NetworkManager.Singleton.IsServer) return;
-
-        var playerNetObj = other.GetComponentInParent<NetworkObject>();
-        if (playerNetObj != null && playerNetObj.IsPlayerObject)
+        if (other.GetComponent<PlayerController>())
         {
-            ulong playerId = playerNetObj.OwnerClientId;
-
-            playerCount--;
-
-            OnPlayerExit?.Invoke(playerId);
-
-            if (playerCount == 0)
-                OnLastPlayerExit?.Invoke();
+            OnPlayerExit?.Invoke();
+            HasPlayer = false;
         }
     }
-
-    public bool HasPlayers() => playerCount > 0;
 }

@@ -1,8 +1,7 @@
-﻿using Unity.Netcode;
-using UnityEngine;
+﻿using UnityEngine;
 
-[RequireComponent(typeof(NetworkObject))]
-public class Projectile : NetworkBehaviour
+[RequireComponent(typeof(Rigidbody2D))]
+public class Projectile : MonoBehaviour
 {
     public float knockback = 60f;
     public float speed = 10f;
@@ -15,7 +14,6 @@ public class Projectile : NetworkBehaviour
     private float spawnTime;
     private HealthModule ownerHealth;
 
-    // Called on server when projectile is spawned
     public void Initialize(Vector2 dir, HealthModule owner)
     {
         direction = dir.normalized;
@@ -26,33 +24,25 @@ public class Projectile : NetworkBehaviour
 
     private void Update()
     {
-        if (!IsServer) return;
-
-        // Move projectile manually
+        // Move projectile
         transform.position += (Vector3)(direction * speed * Time.deltaTime);
 
-        // Check for hits using overlap circle
+        // Check for hits
         Collider2D enemyHit = Physics2D.OverlapCircle(transform.position, radius, enemyMask);
         if (enemyHit != null)
         {
-            // Damage enemy
             if (enemyHit.TryGetComponent<HealthModule>(out var enemyH))
                 enemyH.Damage(ownerHealth, 20f, knockback);
 
-            GetComponent<NetworkObject>().Despawn();
+            Destroy(gameObject);
         }
 
         Collider2D wallHit = Physics2D.OverlapCircle(transform.position, radius, wallMask);
-
         if (wallHit != null)
-            GetComponent<NetworkObject>().Despawn();
+            Destroy(gameObject);
 
-
-        // Lifetime check
         if (Time.time - spawnTime > lifetime)
-        {
-            GetComponent<NetworkObject>().Despawn();
-        }
+            Destroy(gameObject);
     }
 
 #if UNITY_EDITOR
