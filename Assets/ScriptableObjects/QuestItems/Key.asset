@@ -13,5 +13,4 @@ MonoBehaviour:
   m_Name: Key
   m_EditorClassIdentifier: Assembly-CSharp::QuestItemDefinition
   <ItemName>k__BackingField: Key
-  <Icon>k__BackingField: {fileID: 0}
-  <ID>k__BackingField: 15262
+  <Icon>k__BackingField: {fileID: 21300000, guid: 14f2c5cc365689f4396aecd8e39b1be0, type: 3}

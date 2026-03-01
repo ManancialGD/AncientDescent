@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa51d693d5e31e84ea55f452040f7c60, type: 3}
   m_Name: Fuse
   m_EditorClassIdentifier: Assembly-CSharp::QuestItemDefinition
-  <ItemName>k__BackingField: 
-  <Icon>k__BackingField: {fileID: 0}
+  <ItemName>k__BackingField: Fuse
+  <Icon>k__BackingField: {fileID: 21300000, guid: 06ebd86606dd8a84d9f8c1a9af88fa30, type: 3}

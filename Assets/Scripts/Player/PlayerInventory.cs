@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerInventory : MonoBehaviour
 {
+    public Action<List<QuestItemInstance>> QuestItemsUpdated;
     private List<ItemInstance> items = new();
     private List<QuestItemInstance> questItems = new();
     private HealthModule health;
@@ -33,6 +35,7 @@ public class PlayerInventory : MonoBehaviour
             Definition = def,
             LockId = lockId
         });
+        QuestItemsUpdated?.Invoke(questItems);
     }
 
     public bool HasQuestItem(int lockId)
@@ -61,6 +64,7 @@ public class PlayerInventory : MonoBehaviour
             }
         }
 
+        QuestItemsUpdated?.Invoke(new List<QuestItemInstance>(questItems));
         return removed;
     }
 
