@@ -2,13 +2,10 @@
 
 public class PlayerHPBar : MonoBehaviour
 {
-    [SerializeField] private RectTransform fill;
-    private HealthModule healthModule;
+    [SerializeField] private HealthModule healthModule;
 
-    private void Awake()
-    {
-        healthModule = GetComponentInParent<HealthModule>();
-    }
+    [SerializeField] private RectTransform fill;
+
     private void Start()
     {
         UpdateFill();
@@ -44,6 +41,9 @@ public class PlayerHPBar : MonoBehaviour
 
     private void UpdateFill()
     {
+        if (healthModule == null || fill == null)
+            return;
+
         if (healthModule.MaxHealth <= 0)
             return;
         float p = healthModule.CurrentHealth / healthModule.MaxHealth;
@@ -51,4 +51,17 @@ public class PlayerHPBar : MonoBehaviour
         s.x = p;
         fill.localScale = s;
     }
+
+#if UNITY_EDITOR
+    private void OnValidate()
+    {
+        if (healthModule == null)
+        {
+            PlayerController player = FindAnyObjectByType<PlayerController>();
+            
+            if (player != null)
+                healthModule = player.GetComponent<HealthModule>();
+        }
+    }
+#endif
 }

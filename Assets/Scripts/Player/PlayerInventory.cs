@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlayerInventory : MonoBehaviour
 {
     public Action<List<QuestItemInstance>> QuestItemsUpdated;
+    public Action<List<ItemInstance>> UpgradeItemsUpdated;
     private List<ItemInstance> items = new();
     private List<QuestItemInstance> questItems = new();
     private HealthModule health;
@@ -26,6 +27,7 @@ public class PlayerInventory : MonoBehaviour
 
         items.Add(instance);
         ApplyItem(instance);
+        UpgradeItemsUpdated?.Invoke(new List<ItemInstance>(items));
     }
 
     public void AddQuestItem(QuestItemDefinition def, int lockId)

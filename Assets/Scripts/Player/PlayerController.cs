@@ -33,6 +33,7 @@ public class PlayerController : MonoBehaviour
     public Transform firePoint;
     public Animator muzzleFlashAnimator;
     private PlayerControls controls;
+    private PlayerInteraction interaction;
     private float lastShootTime;
     private PlayerControlState playerState = PlayerControlState.Gameplay;
     private bool isFiring;
@@ -44,6 +45,7 @@ public class PlayerController : MonoBehaviour
         stats = GetComponent<PlayerStats>();
         movement = GetComponent<PlayerMovement>();
         health = GetComponent<HealthModule>();
+        interaction = GetComponent<PlayerInteraction>();
 
         controls = new PlayerControls();
 
@@ -51,6 +53,7 @@ public class PlayerController : MonoBehaviour
         controls.Player.Move.canceled += OnMoveCanceled;
         controls.Player.Fire.started += OnFireStarted;
         controls.Player.Fire.canceled += OnFireCanceled;
+        controls.Player.Interact.performed += OnInteractPerformed;
 
         controls.Enable();
 
@@ -63,6 +66,7 @@ public class PlayerController : MonoBehaviour
         controls.Player.Move.canceled -= OnMoveCanceled;
         controls.Player.Fire.started -= OnFireStarted;
         controls.Player.Fire.canceled -= OnFireCanceled;
+        controls.Player.Interact.performed -= OnInteractPerformed;
 
         controls.Disable();
     }
@@ -91,6 +95,11 @@ public class PlayerController : MonoBehaviour
     private void OnFireCanceled(InputAction.CallbackContext ctx)
     {
         isFiring = false;
+    }
+
+    private void OnInteractPerformed(InputAction.CallbackContext ctx)
+    {
+        interaction?.OnInteractPerformed(ctx);
     }
 
     private void Update()
