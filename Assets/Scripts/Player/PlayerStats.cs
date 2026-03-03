@@ -29,31 +29,45 @@ public class PlayerStats : MonoBehaviour, IStatProvider
         if (!modifiers.TryGetValue(type, out var modList) || modList.Count == 0)
             return baseValue;
 
-        float value = baseValue;
+        float finalValue = baseValue;
+        float flatModifierSum = 0f;
+        float percentMod = 0f;
+        float? setValue = null;
 
         foreach (var mod in modList)
         {
             switch (mod.ModifierType)
             {
                 case ModifierType.Set:
-                    value = mod.Value;
+                    setValue = mod.Value;
                     break;
-                case ModifierType.Add:
-                    value += mod.Value;
+
+                case ModifierType.FlatAdd:
+                    flatModifierSum += mod.Value;
                     break;
-                case ModifierType.Remove:
-                    value -= mod.Value;
+
+                case ModifierType.FlatRemove:
+                    flatModifierSum -= mod.Value;
                     break;
-                case ModifierType.Multiply:
-                    value *= mod.Value;
+
+                case ModifierType.PercentAdd:
+                    percentMod += mod.Value;
                     break;
-                case ModifierType.Divide:
-                    value /= mod.Value;
+                case ModifierType.PercentRemove:
+                    percentMod -= mod.Value;
                     break;
             }
         }
 
-        return value;
+        if (setValue.HasValue)
+            finalValue = setValue.Value;
+        else
+        {
+            finalValue += finalValue * percentMod;
+            finalValue += flatModifierSum;
+        }
+
+        return finalValue;
     }
 
     public void AddModifier(StatModifier modifier)

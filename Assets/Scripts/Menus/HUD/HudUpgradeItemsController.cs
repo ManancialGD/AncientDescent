@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HudQuestItemsController : HudItemControllerBase<QuestItemInstance>
+public class HudUpgradeItemsController : HudItemControllerBase<ItemInstance>
 {
     private PlayerInventory playerInventory;
 
@@ -14,33 +14,33 @@ public class HudQuestItemsController : HudItemControllerBase<QuestItemInstance>
     private void OnEnable()
     {
         if (playerInventory != null)
-            playerInventory.QuestItemsUpdated += OnQuestItemsUpdated;
+            playerInventory.UpgradeItemsUpdated += OnUpgradeItemsUpdated;
     }
 
     private void OnDisable()
     {
         if (playerInventory != null)
-            playerInventory.QuestItemsUpdated -= OnQuestItemsUpdated;
+            playerInventory.UpgradeItemsUpdated -= OnUpgradeItemsUpdated;
     }
 
-    private void OnQuestItemsUpdated(List<QuestItemInstance> questItems)
+    private void OnUpgradeItemsUpdated(List<ItemInstance> upgradeItems)
     {
-        UpdateUI(questItems);
+        UpdateUI(upgradeItems);
     }
 
-    protected override Dictionary<Sprite, int> GetDisplayItems(List<QuestItemInstance> items)
+    protected override Dictionary<BaseItem, int> GetDisplayItems(List<ItemInstance> items)
     {
-        var dict = new Dictionary<Sprite, int>();
+        var dict = new Dictionary<BaseItem, int>();
 
         foreach (var inst in items)
         {
             if (inst.Definition == null || inst.Definition.Icon == null)
                 continue;
 
-            if (dict.ContainsKey(inst.Definition.Icon))
-                dict[inst.Definition.Icon]++;
+            if (dict.ContainsKey(inst.Definition))
+                dict[inst.Definition] += inst.StackCount;
             else
-                dict[inst.Definition.Icon] = 1;
+                dict[inst.Definition] = inst.StackCount;
         }
 
         return dict;

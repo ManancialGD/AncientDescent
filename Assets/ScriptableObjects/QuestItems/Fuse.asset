@@ -13,4 +13,5 @@ MonoBehaviour:
   m_Name: Fuse
   m_EditorClassIdentifier: Assembly-CSharp::QuestItemDefinition
   <ItemName>k__BackingField: Fuse
+  <Description>k__BackingField: Used to power engines.
   <Icon>k__BackingField: {fileID: 21300000, guid: 06ebd86606dd8a84d9f8c1a9af88fa30, type: 3}

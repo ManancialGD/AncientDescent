@@ -9,7 +9,7 @@ public abstract class HudItemControllerBase<TItem> : MonoBehaviour
     protected readonly List<HudItem> spawnedItems = new();
 
     // Derived classes must implement how to convert the raw list into display data
-    protected abstract Dictionary<Sprite, int> GetDisplayItems(List<TItem> items);
+    protected abstract Dictionary<BaseItem, int> GetDisplayItems(List<TItem> items);
 
     protected void UpdateUI(List<TItem> items)
     {

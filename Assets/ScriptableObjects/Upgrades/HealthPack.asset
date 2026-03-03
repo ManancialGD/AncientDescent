@@ -10,14 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e9db64c644e6b5941ac545baa04d9304, type: 3}
-  m_Name: Ice
+  m_Name: HealthPack
   m_EditorClassIdentifier: Assembly-CSharp::StatItemDefinition
-  <ItemName>k__BackingField: Ice
-  <Icon>k__BackingField: {fileID: 0}
+  <ItemName>k__BackingField: Health Pack
+  <Description>k__BackingField: add 5% to max health.
+  <Icon>k__BackingField: {fileID: 21300000, guid: abe673110ab44a04888df87e6e8058fa, type: 3}
   modifiers:
-  - statType: 2
-    value: 4
-    modifierType: 0
-  - statType: 3
-    value: 2
-    modifierType: 0
+  - statType: 0
+    value: 0.05
+    modifierType: 2

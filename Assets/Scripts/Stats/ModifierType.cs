@@ -1,8 +1,8 @@
 ﻿public enum ModifierType
 {
-    Set,
-    Add,
-    Remove,
-    Multiply,
-    Divide,
+    FlatAdd,
+    FlatRemove,
+    PercentAdd,
+    PercentRemove,
+    Set
 }

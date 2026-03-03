@@ -13,4 +13,5 @@ MonoBehaviour:
   m_Name: Key
   m_EditorClassIdentifier: Assembly-CSharp::QuestItemDefinition
   <ItemName>k__BackingField: Key
+  <Description>k__BackingField: Used to open locked doors.
   <Icon>k__BackingField: {fileID: 21300000, guid: 14f2c5cc365689f4396aecd8e39b1be0, type: 3}
