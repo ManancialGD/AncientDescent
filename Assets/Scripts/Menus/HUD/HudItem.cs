@@ -45,6 +45,11 @@ public class HudItem : MonoBehaviour,
     {
         TooltipUI.Instance.Hide();
     }
+    
+    private void OnDestroy()
+    {
+        TooltipUI.Instance.Hide();
+    }
 
 #if UNITY_EDITOR
     protected virtual void OnValidate()
