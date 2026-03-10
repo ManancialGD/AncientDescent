@@ -4,12 +4,27 @@
 
 ### Main Systems & Communication
 
-- **Player System**: `PlayerController` is the central hub. It receives input via the new Input System, manages movement (`PlayerMovement`), health (`HealthModule`), stats (`PlayerStats`), inventory (`PlayerInventory`), and animations (`PlayerAnimations`). It also holds a reference to `PlayerInteraction` for handling interactable objects.
-- **Enemy System**: `MeleeEnemy` controls enemy behavior, using `EnemyMovement` for movement, `HealthModule` for health, and `MeleeEnemyAnimations` for animation. It subscribes to its own health events to trigger death and damage reactions.
-- **Room System**: `RoomController` detects player entry/exit via `PlayerTrigger2D`. Each room type (combat, safe, portal) inherits from `RoomBehaviour` and implements specific logic (spawning enemies, healing, etc.). Rooms communicate with doors and spawners.
-- **Interaction System**: Objects implementing `IInteractable` (Chest, Engine, LockedDoor) define interaction logic. `PlayerInteraction` detects the nearest interactable, shows a prompt via `InteractablePrompt`, and invokes `Interact()` when the player presses the interaction key.
-- **Item & Stats System**: Items are `ScriptableObject` definitions (`BaseItem`). Stat items apply `StatModifier`s to `PlayerStats`. Quest items are tracked in `PlayerInventory` and can be consumed. The `IStatProvider` interface allows any object (player, enemy) to provide stats; `PlayerStats` and `EnemyStats` implement it.
-- **UI System**: `TooltipUI` is a singleton for displaying item tooltips on hover. HUD item controllers (`HudQuestItemsController`, `HudUpgradeItemsController`) listen to inventory updates and refresh the display. Health bars (`PlayerHPBar`, `EnemyHPBar`) listen to health events.
+- **Player System**: `PlayerController` is the central hub.
+It receives input via the new Input System, manages movement (`PlayerMovement`), health (`HealthModule`), stats (`PlayerStats`), inventory (`PlayerInventory`), and animations (`PlayerAnimations`).
+It also holds a reference to `PlayerInteraction` for handling interactable objects.
+
+- **Enemy System**: `MeleeEnemy` controls enemy behavior, using `EnemyMovement` for movement, `HealthModule` for health, and `MeleeEnemyAnimations` for animation.
+It subscribes to its own health events to trigger death and damage reactions.
+
+- **Room System**: `RoomController` detects player entry/exit via `PlayerTrigger2D`.
+Each room type (combat, safe, portal) inherits from `RoomBehaviour` and implements specific logic (spawning enemies, healing, etc.).
+Rooms communicate with doors and spawners.
+
+- **Interaction System**: Objects implementing `IInteractable` (Chest, Engine, LockedDoor) define interaction logic.
+`PlayerInteraction` detects the nearest interactable, shows a prompt via `InteractablePrompt`, and invokes `Interact()` when the player presses the interaction key.
+
+- **Item & Stats System**: Items are `ScriptableObject` definitions (`BaseItem`). Stat items apply `StatModifier`s to `PlayerStats`.
+Quest items are tracked in `PlayerInventory` and can be consumed. The `IStatProvider` interface allows any object (player, enemy) to provide stats;
+`PlayerStats` and `EnemyStats` implement it.
+
+- **UI System**: `TooltipUI` is a singleton for displaying item tooltips on hover.
+HUD item controllers (`HudQuestItemsController`, `HudUpgradeItemsController`) listen to inventory updates and refresh the display.
+Health bars (`PlayerHPBar`, `EnemyHPBar`) listen to health events.
 
 ### Main Game Flow
 
@@ -109,6 +124,18 @@ Currently, there are no automated tests. To manually test:
 - **Events**: always public, using the class `Action`, `PascalCase` e.g `RoomEnter` (not `OnRoomEnter`)
 - **UnityEvents**: `PascalCase` always private with the `SerializeField` attribute (e.g `OnRoomEnter`)
 
+### Class Organization
+Classes are organized with the following:
+
+- Exposed variables (`SerializeField` and `public`)
+- Private fields
+- Properties
+- Initialisation Methods by order (`Awake` -> `OnEnable` and `OnDisable` -> `Start`, etc.)
+- Loop Methods (`Update`, `FixedUpdate`, etc. )
+- Help Methods (`CheckCollision`, `CanInteract`, etc. )
+- Event Listener Methods
+- Debug Methods (`OnValidate`, `OnDrawGizmos`, etc.) - Always within `#if UNITY_EDITOR #endif`
+
 ### Project Organization
 
 - Scripts are placed in `Assets/Scripts/` with subfolders by feature:
@@ -122,14 +149,6 @@ Currently, there are no automated tests. To manually test:
   - `Utilities/`
 
 All scripts should be inside their namespaces that follow the folder structure (e.g `namespace AncientDescent.Player`)
-
-### Design Patterns Used
-
-- **Observer**: Events (`Damaged`, `Died`, inventory update actions) decouple systems (e.g., UI listens to health changes).
-- **Component**: Separation of concerns (movement, health, stats as separate components).
-- **Strategy**: Different room behaviours encapsulate room logic.
-- **Interface**: `IInteractable` allows any object to be interacted with.
-- **ScriptableObject**: Used for item definitions to enable data-driven design.
 
 ### ScriptableObject Usage
 
