@@ -19,6 +19,7 @@ public class HealthModule : MonoBehaviour
     public event Action<DamageInfo> Damaged;
     public event Action<float> Healed;
     public event Action<HealthModule> Died;
+    public event Action<HealthModule> MaxHealthChanged;
 
     private IStatProvider statProvider;
     private float cachedMaxHealth;
@@ -29,7 +30,7 @@ public class HealthModule : MonoBehaviour
             : defaultMaxHealth;
 
 
-    private void Awake()
+    private void Start()
     {
         statProvider = GetComponent<IStatProvider>();
         IsDead = false;
@@ -101,5 +102,6 @@ public class HealthModule : MonoBehaviour
         }
 
         cachedMaxHealth = newMax;
+        MaxHealthChanged?.Invoke(this);
     }
 }

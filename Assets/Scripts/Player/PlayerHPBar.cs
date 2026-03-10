@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 public class PlayerHPBar : MonoBehaviour
 {
@@ -6,9 +7,15 @@ public class PlayerHPBar : MonoBehaviour
 
     [SerializeField] private RectTransform fill;
 
-    private void Start()
+    private void Awake()
     {
-        UpdateFill();
+        if (healthModule == null)
+        {
+            PlayerController player = FindAnyObjectByType<PlayerController>();
+
+            if (player != null)
+                healthModule = player.GetComponent<HealthModule>();
+        }
     }
 
     private void OnEnable()
@@ -18,6 +25,7 @@ public class PlayerHPBar : MonoBehaviour
 
         healthModule.Damaged += OnDamaged;
         healthModule.Healed += OnHealed;
+        healthModule.MaxHealthChanged += OnMaxHealthChanged;
     }
 
     private void OnDisable()
@@ -27,6 +35,12 @@ public class PlayerHPBar : MonoBehaviour
 
         healthModule.Damaged -= OnDamaged;
         healthModule.Healed -= OnHealed;
+        healthModule.MaxHealthChanged -= OnMaxHealthChanged;
+    }
+
+    private void Start()
+    {
+        UpdateFill();
     }
 
     private void OnDamaged(DamageInfo damageInfo)
@@ -39,6 +53,11 @@ public class PlayerHPBar : MonoBehaviour
         UpdateFill();
     }
 
+    private void OnMaxHealthChanged(HealthModule _)
+    {
+        UpdateFill();
+    }
+
     private void UpdateFill()
     {
         if (healthModule == null || fill == null)
@@ -46,6 +65,7 @@ public class PlayerHPBar : MonoBehaviour
 
         if (healthModule.MaxHealth <= 0)
             return;
+
         float p = healthModule.CurrentHealth / healthModule.MaxHealth;
         Vector3 s = new(1, 1, 1);
         s.x = p;
@@ -58,7 +78,7 @@ public class PlayerHPBar : MonoBehaviour
         if (healthModule == null)
         {
             PlayerController player = FindAnyObjectByType<PlayerController>();
-            
+
             if (player != null)
                 healthModule = player.GetComponent<HealthModule>();
         }

@@ -8,6 +8,10 @@ public class EnemyHPBar : MonoBehaviour
     private void Awake()
     {
         healthModule = GetComponentInParent<HealthModule>();
+    }
+
+    private void Start()
+    {
         UpdateFill();
     }
 
