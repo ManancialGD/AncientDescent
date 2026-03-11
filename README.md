@@ -121,13 +121,13 @@ Currently, there are no automated tests. To manually test:
 - **Methods**: `PascalCase` - For listener methods, use the prefix `On` before the name of the event e.g `OnRoomEnter` - 
 - **Interfaces**: `I` prefix (e.g., `IInteractable`).
 - **Enums**: `PascalCase` (e.g., `StatType`, `ModifierType`).
-- **Events**: always public, using the class `Action`, `PascalCase` e.g `RoomEnter` (not `OnRoomEnter`)
+- **Events**: generally public, using the class `Action`, `PascalCase` e.g `RoomEnter` (not `OnRoomEnter`)
 - **UnityEvents**: `PascalCase` always private with the `SerializeField` attribute (e.g `OnRoomEnter`)
 
 ### Class Organization
 Classes are organized with the following:
 
-- Exposed variables (`SerializeField` and `public`)
+- Exposed fields and properties (`SerializeField` and `public`)
 - Private fields
 - Properties
 - Initialisation Methods by order (`Awake` -> `OnEnable` and `OnDisable` -> `Start`, etc.)
