@@ -1,4 +1,6 @@
 ﻿#if UNITY_EDITOR
+namespace AncientDescent.Editor
+{
     using UnityEditor;
     using UnityEngine;
     using System.IO;
@@ -7,7 +9,7 @@
 
     public static class AutoNamespaceFromFolder
     {
-        private const string GameName = "GameName";
+        private const string GameName = "AncientDescent";
         private const string ScriptsRoot = "Assets/Scripts";
 
         [MenuItem("Tools/Namespaces/Generate Namespace For Selected Scripts")]
@@ -149,7 +151,7 @@
 
             return ns.ToString();
         }
-        
+
         private static bool HasNamespace(string content)
         {
             return Regex.IsMatch(
@@ -174,4 +176,5 @@
             return path.Replace("\\", "/");
         }
     }
+}
 #endif

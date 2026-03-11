@@ -2,41 +2,45 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RoomController : MonoBehaviour
-{
-    [Header("Room Boundary")]
-    [SerializeField] private PlayerTrigger2D boundaryTrigger;
-
-    public event Action OnPlayerEnterRoom;
-    public event Action OnPlayerExitRoom;
-
-    public bool HasPlayer => boundaryTrigger != null ? boundaryTrigger.HasPlayer : false;
-
-    private void Awake()
+namespace AncientDescent.Rooms
+{    
+    public class RoomController : MonoBehaviour
     {
-        if (boundaryTrigger != null)
+        [Header("Room Boundary")]
+        [SerializeField] private PlayerTrigger2D boundaryTrigger;
+    
+        public event Action OnPlayerEnterRoom;
+        public event Action OnPlayerExitRoom;
+    
+        public bool HasPlayer => boundaryTrigger != null ? boundaryTrigger.HasPlayer : false;
+    
+        private void Awake()
         {
-            boundaryTrigger.OnPlayerEnter += OnBoundaryPlayerEnter;
-            boundaryTrigger.OnPlayerExit += OnBoundaryPlayerExit;
+            if (boundaryTrigger != null)
+            {
+                boundaryTrigger.OnPlayerEnter += OnBoundaryPlayerEnter;
+                boundaryTrigger.OnPlayerExit += OnBoundaryPlayerExit;
+            }
+        }
+    
+        private void OnDestroy()
+        {
+            if (boundaryTrigger != null)
+            {
+                boundaryTrigger.OnPlayerEnter -= OnBoundaryPlayerEnter;
+                boundaryTrigger.OnPlayerExit -= OnBoundaryPlayerExit;
+            }
+        }
+    
+        private void OnBoundaryPlayerEnter()
+        {
+            OnPlayerEnterRoom?.Invoke();
+        }
+    
+        private void OnBoundaryPlayerExit()
+        {
+            OnPlayerExitRoom?.Invoke();
         }
     }
 
-    private void OnDestroy()
-    {
-        if (boundaryTrigger != null)
-        {
-            boundaryTrigger.OnPlayerEnter -= OnBoundaryPlayerEnter;
-            boundaryTrigger.OnPlayerExit -= OnBoundaryPlayerExit;
-        }
-    }
-
-    private void OnBoundaryPlayerEnter()
-    {
-        OnPlayerEnterRoom?.Invoke();
-    }
-
-    private void OnBoundaryPlayerExit()
-    {
-        OnPlayerExitRoom?.Invoke();
-    }
 }

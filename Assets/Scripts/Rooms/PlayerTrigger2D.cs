@@ -1,28 +1,32 @@
 ﻿using System;
+using AncientDescent.Player;
 using UnityEngine;
 
-public class PlayerTrigger2D : MonoBehaviour
+namespace AncientDescent.Rooms
 {
-    public event Action OnPlayerEnter;
-    public event Action OnPlayerExit;
-
-    public bool HasPlayer { get; private set; } = false;
-
-    private void OnTriggerEnter2D(Collider2D other)
+    public class PlayerTrigger2D : MonoBehaviour
     {
-        if (other.GetComponent<PlayerController>())
+        public event Action OnPlayerEnter;
+        public event Action OnPlayerExit;
+
+        public bool HasPlayer { get; private set; } = false;
+
+        private void OnTriggerEnter2D(Collider2D other)
         {
-            OnPlayerEnter?.Invoke();
-            HasPlayer = true;
+            if (other.GetComponent<PlayerController>())
+            {
+                OnPlayerEnter?.Invoke();
+                HasPlayer = true;
+            }
         }
-    }
 
-    private void OnTriggerExit2D(Collider2D other)
-    {
-        if (other.GetComponent<PlayerController>())
+        private void OnTriggerExit2D(Collider2D other)
         {
-            OnPlayerExit?.Invoke();
-            HasPlayer = false;
+            if (other.GetComponent<PlayerController>())
+            {
+                OnPlayerExit?.Invoke();
+                HasPlayer = false;
+            }
         }
     }
 }

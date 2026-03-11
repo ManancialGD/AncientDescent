@@ -1,15 +1,20 @@
-﻿using UnityEngine;
+﻿using AncientDescent.Stats;
+using UnityEngine;
 
-public class EnemyStats : MonoBehaviour, IStatProvider
-{
-    [SerializeField] private float maxHealth = 100f;
-
-    public float GetStat(StatType type)
+namespace AncientDescent.Enemies
+{    
+    public class EnemyStats : MonoBehaviour, IStatProvider
     {
-        return type switch
+        [SerializeField] private float maxHealth = 100f;
+    
+        public float GetStat(StatType type)
         {
-            StatType.MaxHealth => maxHealth,
-            _ => 0f
-        };
+            return type switch
+            {
+                StatType.MaxHealth => maxHealth,
+                _ => 0f
+            };
+        }
     }
+
 }

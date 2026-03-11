@@ -1,7 +1,11 @@
-﻿public struct StatModifier
-{
-    public StatType StatType;
-    public float Value;
-    public ModifierType ModifierType;
-    public object Source;
+﻿
+namespace AncientDescent.Stats
+{    public struct StatModifier
+    {
+        public StatType StatType;
+        public float Value;
+        public ModifierType ModifierType;
+        public object Source;
+    }
+
 }

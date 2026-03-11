@@ -1,94 +1,99 @@
+﻿using AncientDescent.Input;
+using AncientDescent.Interactables;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerInteraction : MonoBehaviour
-{
-    [Header("Settings")]
-    [SerializeField] private float interactionRange = 2f;
-    [SerializeField] private LayerMask interactableLayers = -1;
-    [SerializeField] private Transform detectionOrigin;
-
-    private PlayerController player;
-    private PlayerControls controls;
-    private IInteractable currentInteractable;
-    private InteractablePrompt currentPrompt;
-
-    private void Awake()
+namespace AncientDescent.Player
+{    
+    public class PlayerInteraction : MonoBehaviour
     {
-        player = GetComponent<PlayerController>();
-
-        if (detectionOrigin == null) 
-            detectionOrigin = transform;
-    }
-
-    private void Update()
-    {
-        FindClosestInteractable();
-    }
-
-    private void FindClosestInteractable()
-    {
-        Collider2D[] hits = Physics2D.OverlapCircleAll(detectionOrigin.position, interactionRange, interactableLayers);
-        IInteractable closest = null;
-        float closestDistSqr = Mathf.Infinity;
-        Transform closestTransform = null;
-
-        foreach (var hit in hits)
+        [Header("Settings")]
+        [SerializeField] private float interactionRange = 2f;
+        [SerializeField] private LayerMask interactableLayers = -1;
+        [SerializeField] private Transform detectionOrigin;
+    
+        private PlayerController player;
+        private PlayerControls controls;
+        private IInteractable currentInteractable;
+        private InteractablePrompt currentPrompt;
+    
+        private void Awake()
         {
-            if (hit.TryGetComponent<IInteractable>(out var interactable))
+            player = GetComponent<PlayerController>();
+    
+            if (detectionOrigin == null) 
+                detectionOrigin = transform;
+        }
+    
+        private void Update()
+        {
+            FindClosestInteractable();
+        }
+    
+        private void FindClosestInteractable()
+        {
+            Collider2D[] hits = Physics2D.OverlapCircleAll(detectionOrigin.position, interactionRange, interactableLayers);
+            IInteractable closest = null;
+            float closestDistSqr = Mathf.Infinity;
+            Transform closestTransform = null;
+    
+            foreach (var hit in hits)
             {
-                float distSqr = (hit.transform.position - detectionOrigin.position).sqrMagnitude;
-                if (distSqr < closestDistSqr)
+                if (hit.TryGetComponent<IInteractable>(out var interactable))
                 {
-                    closestDistSqr = distSqr;
-                    closest = interactable;
-                    closestTransform = hit.transform;
+                    float distSqr = (hit.transform.position - detectionOrigin.position).sqrMagnitude;
+                    if (distSqr < closestDistSqr)
+                    {
+                        closestDistSqr = distSqr;
+                        closest = interactable;
+                        closestTransform = hit.transform;
+                    }
                 }
             }
-        }
-
-        if (closest != currentInteractable)
-        {
-            if (currentPrompt != null)
-                currentPrompt.SetVisible(false, player);
-
-            currentInteractable = closest;
-
-            if (currentInteractable != null && closestTransform != null)
+    
+            if (closest != currentInteractable)
             {
-                currentPrompt = closestTransform.GetComponent<InteractablePrompt>();
-                if (currentPrompt == null)
-                    currentPrompt = closestTransform.GetComponentInChildren<InteractablePrompt>();
-
                 if (currentPrompt != null)
-                    currentPrompt.SetVisible(true, player);
+                    currentPrompt.SetVisible(false, player);
+    
+                currentInteractable = closest;
+    
+                if (currentInteractable != null && closestTransform != null)
+                {
+                    currentPrompt = closestTransform.GetComponent<InteractablePrompt>();
+                    if (currentPrompt == null)
+                        currentPrompt = closestTransform.GetComponentInChildren<InteractablePrompt>();
+    
+                    if (currentPrompt != null)
+                        currentPrompt.SetVisible(true, player);
+                    else
+                        Debug.LogWarning($"Interactable {closestTransform.name} has no InteractablePrompt component");
+                }
                 else
-                    Debug.LogWarning($"Interactable {closestTransform.name} has no InteractablePrompt component");
+                {
+                    currentPrompt = null;
+                }
             }
-            else
+            else if (currentInteractable != null && currentPrompt != null)
             {
-                currentPrompt = null;
+                currentPrompt.RefreshText(player);
             }
         }
-        else if (currentInteractable != null && currentPrompt != null)
+    
+        public void OnInteractPerformed(InputAction.CallbackContext ctx)
         {
-            currentPrompt.RefreshText(player);
+            if (currentInteractable != null && currentInteractable.CanInteract(player))
+            {
+                currentInteractable.Interact(player);
+            }
         }
-    }
-
-    public void OnInteractPerformed(InputAction.CallbackContext ctx)
-    {
-        if (currentInteractable != null && currentInteractable.CanInteract(player))
+    
+    #if UNITY_EDITOR
+        private void OnDrawGizmosSelected()
         {
-            currentInteractable.Interact(player);
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(detectionOrigin != null ? detectionOrigin.position : transform.position, interactionRange);
         }
+    #endif
     }
-
-#if UNITY_EDITOR
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(detectionOrigin != null ? detectionOrigin.position : transform.position, interactionRange);
-    }
-#endif
 }

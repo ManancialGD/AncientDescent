@@ -1,31 +1,35 @@
 ﻿using UnityEngine;
 
-[RequireComponent(typeof(RoomController))]
-public abstract class RoomBehaviour : MonoBehaviour
-{
-    protected RoomController roomController;
-
-    protected virtual void Awake()
+namespace AncientDescent.Rooms
+{    
+    [RequireComponent(typeof(RoomController))]
+    public abstract class RoomBehaviour : MonoBehaviour
     {
-        roomController = GetComponent<RoomController>();
-    }
-
-    protected virtual void OnEnable()
-    {
-        if (roomController != null)
+        protected RoomController roomController;
+    
+        protected virtual void Awake()
         {
-            SubscribeToEvents();
+            roomController = GetComponent<RoomController>();
         }
-    }
-
-    protected virtual void OnDisable()
-    {
-        if (roomController != null)
+    
+        protected virtual void OnEnable()
         {
-            UnsubscribeFromEvents();
+            if (roomController != null)
+            {
+                SubscribeToEvents();
+            }
         }
+    
+        protected virtual void OnDisable()
+        {
+            if (roomController != null)
+            {
+                UnsubscribeFromEvents();
+            }
+        }
+    
+        protected abstract void SubscribeToEvents();
+        protected abstract void UnsubscribeFromEvents();
     }
 
-    protected abstract void SubscribeToEvents();
-    protected abstract void UnsubscribeFromEvents();
 }

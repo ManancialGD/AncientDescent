@@ -1,153 +1,157 @@
-﻿using UnityEngine;
+﻿using AncientDescent.Combat;
+using AncientDescent.Player;
+using UnityEngine;
 
-[RequireComponent(typeof(HealthModule))]
-[RequireComponent(typeof(EnemyMovement))]
-[RequireComponent(typeof(MeleeEnemyAnimations))]
-public class MeleeEnemy : MonoBehaviour
-{
-    [Header("Combat Settings")]
-    public float attackRange = 1.2f;
-    public float attackImpulse = 60;
-    public float attackRadius = 1.4f;
-    public float attackDamage = 10f;
-    public float attackCooldown = 1.5f;
-    public float attackRecoveryTime = 1.0f;
-    public float knockback = 30f;
-    [SerializeField] private LayerMask playerLayer;
-
-    private float lastAttackTime;
-    private bool isAttacking;
-    private bool isRecovering;
-
-    private Transform targetPlayer;
-    private HealthModule health;
-    private EnemyMovement movement;
-    private MeleeEnemyAnimations animations;
-
-    public Vector2 LookDirection =>
-        targetPlayer != null
-            ? (targetPlayer.position - transform.position).normalized
-            : Vector2.zero;
-
-    private void Start()
+namespace AncientDescent.Enemies
+{    
+    [RequireComponent(typeof(HealthModule))]
+    [RequireComponent(typeof(EnemyMovement))]
+    [RequireComponent(typeof(MeleeEnemyAnimations))]
+    public class MeleeEnemy : MonoBehaviour
     {
-        health = GetComponent<HealthModule>();
-        movement = GetComponent<EnemyMovement>();
-        animations = GetComponent<MeleeEnemyAnimations>();
-
-        health.Died += OnDied;
-        health.Damaged += OnDamaged;
-
-        // Find player (assuming there's only one player in single-player)
-        PlayerController player = FindAnyObjectByType<PlayerController>();
-        if (player != null)
-            targetPlayer = player.transform;
-    }
-
-    private void OnDestroy()
-    {
-        if (health != null)
+        [Header("Combat Settings")]
+        public float attackRange = 1.2f;
+        public float attackImpulse = 60;
+        public float attackRadius = 1.4f;
+        public float attackDamage = 10f;
+        public float attackCooldown = 1.5f;
+        public float attackRecoveryTime = 1.0f;
+        public float knockback = 30f;
+        [SerializeField] private LayerMask playerLayer;
+    
+        private float lastAttackTime;
+        private bool isAttacking;
+        private bool isRecovering;
+    
+        private Transform targetPlayer;
+        private HealthModule health;
+        private EnemyMovement movement;
+        private MeleeEnemyAnimations animations;
+    
+        public Vector2 LookDirection =>
+            targetPlayer != null
+                ? (targetPlayer.position - transform.position).normalized
+                : Vector2.zero;
+    
+        private void Start()
         {
-            health.Died -= OnDied;
-            health.Damaged -= OnDamaged;
-        }
-    }
-
-    private void Update()
-    {
-        if (health.IsDead) return;
-
-        if (targetPlayer == null)
-        {
+            health = GetComponent<HealthModule>();
+            movement = GetComponent<EnemyMovement>();
+            animations = GetComponent<MeleeEnemyAnimations>();
+    
+            health.Died += OnDied;
+            health.Damaged += OnDamaged;
+    
             PlayerController player = FindAnyObjectByType<PlayerController>();
             if (player != null)
                 targetPlayer = player.transform;
-            return;
         }
-
-        if (isAttacking || isRecovering)
-            return;
-
-        float distance = Vector2.Distance(transform.position, targetPlayer.position);
-
-        if (distance > attackRange)
+    
+        private void OnDestroy()
         {
-            movement.MoveTowards(targetPlayer.position);
-        }
-        else if (Time.time >= lastAttackTime + attackCooldown)
-        {
-            StartAttack();
-        }
-    }
-
-    private void StartAttack()
-    {
-        lastAttackTime = Time.time;
-        isAttacking = true;
-
-        movement.Rb.AddForce(LookDirection.normalized * attackImpulse, ForceMode2D.Impulse);
-        animations.PlayAttackAnimation();
-    }
-
-    // === ANIMATION EVENT (HIT FRAME) ===
-    public void ApplyAttackHit()
-    {
-        if (!isAttacking)
-            return;
-
-        isAttacking = false;
-
-        Collider2D[] hits = Physics2D.OverlapCircleAll(
-            transform.position + (Vector3)(LookDirection * attackRange),
-            attackRadius,
-            playerLayer
-        );
-
-        foreach (var hit in hits)
-        {
-            if (!hit.TryGetComponent(out HealthModule playerHealth))
-                continue;
-
-            playerHealth.Damage(health, attackDamage, knockback);
-
-            if (knockback > 0f &&
-                playerHealth.TryGetComponent(out PlayerMovement playerMovement))
+            if (health != null)
             {
-                Vector2 dir = (playerMovement.transform.position - transform.position).normalized;
-                playerMovement.ApplyKnockback(dir, knockback);
+                health.Died -= OnDied;
+                health.Damaged -= OnDamaged;
             }
         }
-
-        isRecovering = true;
+    
+        private void Update()
+        {
+            if (health.IsDead) return;
+    
+            if (targetPlayer == null)
+            {
+                PlayerController player = FindAnyObjectByType<PlayerController>();
+                if (player != null)
+                    targetPlayer = player.transform;
+                return;
+            }
+    
+            if (isAttacking || isRecovering)
+                return;
+    
+            float distance = Vector2.Distance(transform.position, targetPlayer.position);
+    
+            if (distance > attackRange)
+            {
+                movement.MoveTowards(targetPlayer.position);
+            }
+            else if (Time.time >= lastAttackTime + attackCooldown)
+            {
+                StartAttack();
+            }
+        }
+    
+        private void StartAttack()
+        {
+            lastAttackTime = Time.time;
+            isAttacking = true;
+    
+            movement.Rb.AddForce(LookDirection.normalized * attackImpulse, ForceMode2D.Impulse);
+            animations.PlayAttackAnimation();
+        }
+    
+        // === ANIMATION EVENT (HIT FRAME) ===
+        public void ApplyAttackHit()
+        {
+            if (!isAttacking)
+                return;
+    
+            isAttacking = false;
+    
+            Collider2D[] hits = Physics2D.OverlapCircleAll(
+                transform.position + (Vector3)(LookDirection * attackRange),
+                attackRadius,
+                playerLayer
+            );
+    
+            foreach (var hit in hits)
+            {
+                if (!hit.TryGetComponent(out HealthModule playerHealth))
+                    continue;
+    
+                playerHealth.Damage(health, attackDamage, knockback);
+    
+                if (knockback > 0f &&
+                    playerHealth.TryGetComponent(out PlayerMovement playerMovement))
+                {
+                    Vector2 dir = (playerMovement.transform.position - transform.position).normalized;
+                    playerMovement.ApplyKnockback(dir, knockback);
+                }
+            }
+    
+            isRecovering = true;
+        }
+    
+        // === ANIMATION EVENT (LAST FRAME) ===
+        public void EndAttack()
+        {
+            isRecovering = false;
+        }
+    
+        private void OnDied(HealthModule _)
+        {
+            Destroy(gameObject);
+        }
+    
+        private void OnDamaged(DamageInfo info)
+        {
+            if (info.Damager == null) return;
+            Vector2 knockBackDir = (transform.position - info.Damager.transform.position).normalized;
+            movement.Rb.AddForce(knockBackDir * info.Knockback, ForceMode2D.Impulse);
+        }
+    
+    #if UNITY_EDITOR
+        private void OnDrawGizmosSelected()
+        {
+            Gizmos.color = Color.blue;
+            Gizmos.DrawWireSphere(transform.position, attackRange);
+    
+            Gizmos.color = Color.red;
+            Vector3 dir = LookDirection == Vector2.zero ? transform.right : (Vector3)LookDirection;
+            Gizmos.DrawWireSphere(transform.position + (dir * attackRange), attackRadius);
+        }
+    #endif
     }
-
-    // === ANIMATION EVENT (LAST FRAME) ===
-    public void EndAttack()
-    {
-        isRecovering = false;
-    }
-
-    private void OnDied(HealthModule _)
-    {
-        Destroy(gameObject);
-    }
-
-    private void OnDamaged(DamageInfo info)
-    {
-        if (info.Damager == null) return;
-        Vector2 knockBackDir = (transform.position - info.Damager.transform.position).normalized;
-        movement.Rb.AddForce(knockBackDir * info.Knockback, ForceMode2D.Impulse);
-    }
-
-#if UNITY_EDITOR
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.blue;
-        Gizmos.DrawWireSphere(transform.position, attackRange);
-
-        Gizmos.color = Color.red;
-        Vector3 dir = LookDirection == Vector2.zero ? transform.right : (Vector3)LookDirection;
-        Gizmos.DrawWireSphere(transform.position + (dir * attackRange), attackRadius);
-    }
-#endif
 }

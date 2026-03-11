@@ -1,40 +1,45 @@
 ﻿using System.Linq;
+using AncientDescent.Combat;
+using AncientDescent.Player;
 using UnityEngine;
 
-public class SafeRoomBehaviour : RoomBehaviour
+namespace AncientDescent.Rooms
 {
-    HealthModule playerHealth;
-    [SerializeField] private float healPerSecond = 10f;
-
-    private void Start()
+    public class SafeRoomBehaviour : RoomBehaviour
     {
-        PlayerController player = FindAnyObjectByType<PlayerController>();
+        HealthModule playerHealth;
+        [SerializeField] private float healPerSecond = 10f;
 
-        if (player.TryGetComponent(out HealthModule ph))
-            playerHealth = ph;
-    }
-
-    protected override void SubscribeToEvents()
-    {
-
-    }
-
-    protected override void UnsubscribeFromEvents()
-    {
-
-    }
-
-    private void FixedUpdate()
-    {
-        if (roomController.HasPlayer)
-            HealPlayer();
-    }
-
-    private void HealPlayer()
-    {
-        if (playerHealth != null)
+        private void Start()
         {
-            playerHealth.Heal(healPerSecond * Time.fixedDeltaTime);
+            PlayerController player = FindAnyObjectByType<PlayerController>();
+
+            if (player.TryGetComponent(out HealthModule ph))
+                playerHealth = ph;
+        }
+
+        protected override void SubscribeToEvents()
+        {
+
+        }
+
+        protected override void UnsubscribeFromEvents()
+        {
+
+        }
+
+        private void FixedUpdate()
+        {
+            if (roomController.HasPlayer)
+                HealPlayer();
+        }
+
+        private void HealPlayer()
+        {
+            if (playerHealth != null)
+            {
+                playerHealth.Heal(healPerSecond * Time.fixedDeltaTime);
+            }
         }
     }
 }

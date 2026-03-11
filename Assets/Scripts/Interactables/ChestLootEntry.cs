@@ -1,6 +1,12 @@
-﻿[System.Serializable]
-public class ChestLootEntry
+﻿using AncientDescent.Items;
+
+namespace AncientDescent.Interactables
 {
-    public BaseItem itemDefinition;
-    public int lockId;
+    [System.Serializable]
+    public class ChestLootEntry
+    {
+        public BaseItem itemDefinition;
+        public int lockId;
+    }
+
 }

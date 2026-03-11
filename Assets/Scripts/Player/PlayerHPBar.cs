@@ -1,87 +1,91 @@
 ﻿using System.Collections;
+using AncientDescent.Combat;
 using UnityEngine;
 
-public class PlayerHPBar : MonoBehaviour
+namespace AncientDescent.Player
 {
-    [SerializeField] private HealthModule healthModule;
-
-    [SerializeField] private RectTransform fill;
-
-    private void Awake()
+    public class PlayerHPBar : MonoBehaviour
     {
-        if (healthModule == null)
+        [SerializeField] private HealthModule healthModule;
+
+        [SerializeField] private RectTransform fill;
+
+        private void Awake()
         {
-            PlayerController player = FindAnyObjectByType<PlayerController>();
+            if (healthModule == null)
+            {
+                PlayerController player = FindAnyObjectByType<PlayerController>();
 
-            if (player != null)
-                healthModule = player.GetComponent<HealthModule>();
+                if (player != null)
+                    healthModule = player.GetComponent<HealthModule>();
+            }
         }
-    }
 
-    private void OnEnable()
-    {
-        if (healthModule == null)
-            return;
+        private void OnEnable()
+        {
+            if (healthModule == null)
+                return;
 
-        healthModule.Damaged += OnDamaged;
-        healthModule.Healed += OnHealed;
-        healthModule.MaxHealthChanged += OnMaxHealthChanged;
-    }
+            healthModule.Damaged += OnDamaged;
+            healthModule.Healed += OnHealed;
+            healthModule.MaxHealthChanged += OnMaxHealthChanged;
+        }
 
-    private void OnDisable()
-    {
-        if (healthModule == null)
-            return;
+        private void OnDisable()
+        {
+            if (healthModule == null)
+                return;
 
-        healthModule.Damaged -= OnDamaged;
-        healthModule.Healed -= OnHealed;
-        healthModule.MaxHealthChanged -= OnMaxHealthChanged;
-    }
+            healthModule.Damaged -= OnDamaged;
+            healthModule.Healed -= OnHealed;
+            healthModule.MaxHealthChanged -= OnMaxHealthChanged;
+        }
 
-    private void Start()
-    {
-        UpdateFill();
-    }
+        private void Start()
+        {
+            UpdateFill();
+        }
 
-    private void OnDamaged(DamageInfo damageInfo)
-    {
-        UpdateFill();
-    }
+        private void OnDamaged(DamageInfo damageInfo)
+        {
+            UpdateFill();
+        }
 
-    private void OnHealed(float _)
-    {
-        UpdateFill();
-    }
+        private void OnHealed(float _)
+        {
+            UpdateFill();
+        }
 
-    private void OnMaxHealthChanged(HealthModule _)
-    {
-        UpdateFill();
-    }
+        private void OnMaxHealthChanged(HealthModule _)
+        {
+            UpdateFill();
+        }
 
-    private void UpdateFill()
-    {
-        if (healthModule == null || fill == null)
-            return;
+        private void UpdateFill()
+        {
+            if (healthModule == null || fill == null)
+                return;
 
-        if (healthModule.MaxHealth <= 0)
-            return;
+            if (healthModule.MaxHealth <= 0)
+                return;
 
-        float p = healthModule.CurrentHealth / healthModule.MaxHealth;
-        Vector3 s = new(1, 1, 1);
-        s.x = p;
-        fill.localScale = s;
-    }
+            float p = healthModule.CurrentHealth / healthModule.MaxHealth;
+            Vector3 s = new(1, 1, 1);
+            s.x = p;
+            fill.localScale = s;
+        }
 
 #if UNITY_EDITOR
-    private void OnValidate()
-    {
-        if (healthModule == null)
+        private void OnValidate()
         {
-            PlayerController player = FindAnyObjectByType<PlayerController>();
+            if (healthModule == null)
+            {
+                PlayerController player = FindAnyObjectByType<PlayerController>();
 
-            if (player != null)
-                healthModule = player.GetComponent<HealthModule>();
+                if (player != null)
+                    healthModule = player.GetComponent<HealthModule>();
+            }
         }
-    }
 #endif
+    }
 }

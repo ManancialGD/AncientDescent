@@ -1,9 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using AncientDescent.Stats;
 
-[CreateAssetMenu(menuName = "Items/Stat Item")]
-public class StatItemDefinition : BaseItem
-{
-    [SerializeField] private List<StatModifierData> modifiers;
-    public IReadOnlyList<StatModifierData> Modifiers => modifiers;
+namespace AncientDescent.Items
+{    
+    [CreateAssetMenu(menuName = "Items/Stat Item")]
+    public class StatItemDefinition : BaseItem
+    {
+        [SerializeField] private List<StatModifierData> modifiers;
+        public IReadOnlyList<StatModifierData> Modifiers => modifiers;
+    }
+
 }

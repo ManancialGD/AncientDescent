@@ -1,7 +1,10 @@
-﻿public enum PlayerControlState
+﻿namespace AncientDescent.Player
 {
-    Gameplay,
-    Transition,
-    Cutscene,
-    Dead
+    public enum PlayerControlState
+    {
+        Gameplay,
+        Transition,
+        Cutscene,
+        Dead
+    }
 }

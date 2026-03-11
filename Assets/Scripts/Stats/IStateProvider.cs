@@ -1,4 +1,8 @@
-﻿public interface IStatProvider
-{
-    float GetStat(StatType statType);
+﻿
+namespace AncientDescent.Stats
+{    public interface IStatProvider
+    {
+        float GetStat(StatType statType);
+    }
+
 }
