@@ -7,6 +7,7 @@ namespace AncientDescent.Interactables
     public class Chest : MonoBehaviour, IInteractable
     {
         [SerializeField] private ChestLootEntry[] itemsToGive;
+        [SerializeField] private bool startLocked = true;
         private Animator animator;
         private bool canOpen = false;
         private bool isOpened = false;
@@ -14,6 +15,7 @@ namespace AncientDescent.Interactables
         private void Awake()
         {
             animator = GetComponent<Animator>();
+            canOpen = !startLocked;
         }
     
         public void OnCombatCompleted()
