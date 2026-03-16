@@ -8,23 +8,29 @@
 It receives input via the new Input System, manages movement (`PlayerMovement`), health (`HealthModule`), stats (`PlayerStats`), inventory (`PlayerInventory`), and animations (`PlayerAnimations`).
 It also holds a reference to `PlayerInteraction` for handling interactable objects.
 
-- **Enemy System**: `MeleeEnemy` controls enemy behavior, using `EnemyMovement` for movement, `HealthModule` for health, and `MeleeEnemyAnimations` for animation.
-It subscribes to its own health events to trigger death and damage reactions.
-
-- **Room System**: `RoomController` detects player entry/exit via `PlayerTrigger2D`.
-Each room type (combat, safe, portal) inherits from `RoomBehaviour` and implements specific logic (spawning enemies, healing, etc.).
-Rooms communicate with doors and spawners.
+- **Item & Stats System**: Items are `ScriptableObject` definitions (`BaseItem`). Stat items apply `StatModifier`s to `PlayerStats`.
+Quest items are tracked in `PlayerInventory` and can be consumed. The `IStatProvider` interface allows any object (player, enemy) to provide stats;
+`PlayerStats` and `EnemyStats` implement it. Every chest can give one item to the player.
 
 - **Interaction System**: Objects implementing `IInteractable` (Chest, Engine, LockedDoor) define interaction logic.
 `PlayerInteraction` detects the nearest interactable, shows a prompt via `InteractablePrompt`, and invokes `Interact()` when the player presses the interaction key.
 
-- **Item & Stats System**: Items are `ScriptableObject` definitions (`BaseItem`). Stat items apply `StatModifier`s to `PlayerStats`.
-Quest items are tracked in `PlayerInventory` and can be consumed. The `IStatProvider` interface allows any object (player, enemy) to provide stats;
-`PlayerStats` and `EnemyStats` implement it.
+
+- **Enemy System**: `MeleeEnemy` controls enemy behavior, using `EnemyMovement` for movement, `HealthModule` for health, and `MeleeEnemyAnimations` for animation.
+It subscribes to its own health events to trigger death and damage reactions.
+
+- **Health System**: The class `HealthModule` is the core health component. Common throughout player and enemies. Gives events for when gets damaged, heals and dies.
+
+
+- **Room System**: `RoomController` detects player entry/exit via `PlayerTrigger2D`.
+Each room type (combat, safe, portal) inherits from `RoomBehaviour` and implements specific logic (spawning enemies, healing, etc.).
+Rooms communicate with doors and spawners. `CombatRoomBehaviour` spawns enemies and keep track of them, listening to their events to know if they die.
+  
 
 - **UI System**: `TooltipUI` is a singleton for displaying item tooltips on hover.
 HUD item controllers (`HudQuestItemsController`, `HudUpgradeItemsController`) listen to inventory updates and refresh the display.
 Health bars (`PlayerHPBar`, `EnemyHPBar`) listen to health events.
+
 
 ### Main Game Flow
 
@@ -56,7 +62,7 @@ The entry point is `MainMenuController` in the MainMenu scene. It loads the game
 
 ### Implementing a New Feature
 
-- **New Enemy Type**: Create a new prefab with components like `HealthModule`, `EnemyMovement`, and a custom behavior script. Implement its attack logic. Add to spawn points in rooms.
+- **New Enemy Type**: Create a new prefab with these components: `HealthModule`, `EnemyMovement`, and a custom behavior script, such as `MeleeEnemy`. Implement its attack logic. Add to spawn points in rooms.
 - **New Item**: Create a new `ScriptableObject` (right-click > Items > Stat Item or Quest Item). Set name, description, icon, and modifiers. Add to chest loot lists.
 - **New Room Behaviour**: Derive from `RoomBehaviour`, implement `SubscribeToEvents` and `UnsubscribeFromEvents`. Attach to a room GameObject with a `RoomController`. Use `UnityEvent` hooks if needed.
 
@@ -69,7 +75,7 @@ Currently, there are no automated tests. To manually test:
 ### How to Build
 
 - Open **File > Build Settings**.
-- Add the scenes (MainMenu, DungeonPrototype) to the build list.
+- Add the scenes to the build list in order: MainMenu, Floor1, Floor2, Floor3, Floor4, Floor5.
 - Select target platform and click **Build**.
 
 ---
@@ -80,7 +86,7 @@ Currently, there are no automated tests. To manually test:
 
 #### Creating a New Enemy
 
-1. **Prefab**: Duplicate an existing enemy prefab (e.g., `MeleeEnemy`). Place in `Assets/Prefabs/Enemies/`.
+1. **Prefab**: Copy an existing enemy prefab (e.g., `MeleeEnemy`). Place in `Assets/Prefabs/Enemies/`.
 2. **Components**: Adjust `MeleeEnemy` parameters (attack range, damage, cooldown). Replace sprite and animations via the `Animator`.
 3. **Add to Spawners**: In a room (e.g., `CombatRoomBehaviour`), drag the new enemy prefab into the `enemyPrefab` field of the spawn points.
 
@@ -125,7 +131,7 @@ Currently, there are no automated tests. To manually test:
 - **UnityEvents**: `PascalCase` always private with the `SerializeField` attribute (e.g `OnRoomEnter`)
 
 ### Class Organization
-Classes are organized with the following:
+Classes are organized in order by the following:
 
 - Exposed fields and properties (`SerializeField` and `public`)
 - Private fields
