@@ -988,7 +988,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MainMenuController
   startButton: {fileID: 1482639607}
   quitButton: {fileID: 1215260524}
-  dungeonSceneName: DungeonPrototype
+  dungeonSceneName: Floor1
 --- !u!1 &1482639605
 GameObject:
   m_ObjectHideFlags: 0
