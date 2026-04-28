@@ -13,12 +13,12 @@ namespace AncientDescent.CameraUtils
 
         private void Start()
         {
-            cameraShaker = Camera.main.GetComponent<CameraShaker>();
+            cameraShaker = Camera.main?.GetComponent<CameraShaker>();
         }
 
         public void TriggerShake()
         {
-            cameraShaker ??= Camera.main.GetComponent<CameraShaker>();
+            cameraShaker ??= Camera.main?.GetComponent<CameraShaker>();
 
             if (cameraShaker != null)
             {

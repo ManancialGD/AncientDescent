@@ -108,6 +108,7 @@ GameObject:
   - component: {fileID: 4874518303193282611}
   - component: {fileID: 1991877673892276363}
   - component: {fileID: 7390329698100664069}
+  - component: {fileID: 368804642201737778}
   m_Layer: 6
   m_Name: MeleeEnemy
   m_TagString: Untagged
@@ -144,7 +145,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04a558583a1c3844c98d2642b21b2119, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MeleeEnemy
-  attackRange: 18.7
+  attackRange: 32
+  reachDistance: 18.7
   attackImpulse: 120
   attackRadius: 8
   attackDamage: 10
@@ -166,8 +168,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e9dbe46e43b549d4483d7cd341afb6a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyMovement
-  moveSpeed: 65
-  acceleration: 12
+  moveSpeed: 70
+  acceleration: 14
   friction: 8
 --- !u!114 &1759375796926389444
 MonoBehaviour:
@@ -302,6 +304,22 @@ CapsuleCollider2D:
   m_Offset: {x: 0.00000017991839, y: 1.5092651}
   m_Size: {x: 14.767975, y: 11.010344}
   m_Direction: 1
+--- !u!114 &368804642201737778
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8775893410314518539}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7bc5225f3fdf0fe4d879f92c154c839b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AncientDescent.CameraUtils.CameraShakeSignal
+  amplitude: 1.25
+  frequency: 20
+  duration: 0.1
+  unscaledTime: 0
 --- !u!1001 &1981479155778847778
 PrefabInstance:
   m_ObjectHideFlags: 0
